@@ -5,11 +5,11 @@ module HW01 where
 
 -- Get the last digit from a number
 lastDigit :: Integer -> Integer
-lastDigit = undefined
+lastDigit = (`mod` 10)
 
 -- Drop the last digit from a number
 dropLastDigit :: Integer -> Integer
-dropLastDigit = undefined
+dropLastDigit = (`div` 10)
 
 -- Exercise 2 -----------------------------------------
 
