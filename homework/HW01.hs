@@ -29,7 +29,7 @@ doubleEveryOther xs = xs
 
 -- Calculate the sum of all the digits in every Integer.
 sumDigits :: [Integer] -> Integer
-sumDigits = undefined
+sumDigits = foldr (\n s -> sum [lastDigit n, dropLastDigit n, s]) 0
 
 
 -- Exercise 5 -----------------------------------------
