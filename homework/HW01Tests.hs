@@ -73,8 +73,32 @@ ex5Tests = [ Test "luhn test" testLuhn
 
 -- Exercise 6 -----------------------------------------
 
+testHanoi :: (Integer, Peg, Peg, Peg, [Move]) -> Bool
+testHanoi (n, p, q, r, ms) = hanoi n p q r == ms
+
 ex6Tests :: [Test]
-ex6Tests = []
+ex6Tests = [ Test "hanoi test" testHanoi
+             [ (0,"a","b","c",[])
+             , (1,"a","b","c",[("a","b")])
+             , (2,"a","b","c",[("a","c"),("a","b"),("c","b")])
+             , (3,"a","b","c",[("a","b"),("a","c"),("b","c")
+                              ,("a","b")
+                              ,("c","a"),("c","b"),("a","b")
+                              ]
+               )
+             , (4,"a","b","c",[("a","c"),("a","b"),("c","b")
+                              ,("a","c")
+                              ,("b","a"),("b","c"),("a","c")
+                              ,("a","b")
+                              ,("c","b"),("c","a"),("b","a")
+                              ,("c","b")
+                              ,("a","c"),("a","b"),("c","b")
+                              ]
+               )
+             , (-1,"a","b","c",[])
+             , (1,"Oakland","Louisville","Baltimore",[("Oakland","Louisville")])
+             ]
+           ]
 
 -- All Tests ------------------------------------------
 
