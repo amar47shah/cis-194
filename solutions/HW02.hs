@@ -33,7 +33,7 @@ exactMatches ps qs = length . filter (\(a, b) -> a == b) $ zip ps qs
 
 -- For each peg in xs, count how many times is occurs in ys
 countColors :: Code -> [Int]
-countColors = undefined
+countColors ps = map (\c -> length . filter (== c) $ ps) colors
 
 -- Count number of matches between the actual code and the guess
 matches :: Code -> Code -> Int
