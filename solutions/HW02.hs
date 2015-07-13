@@ -23,7 +23,7 @@ colors = [Red, Green, Blue, Yellow, Orange, Purple]
 
 -- Get the number of exact matches between the actual code and the guess
 exactMatches :: Code -> Code -> Int
-exactMatches = undefined
+exactMatches ps qs = length . filter (\(a, b) -> a == b) $ zip ps qs
 
 -- Exercise 2 -----------------------------------------
 
