@@ -28,7 +28,18 @@ ex2Tests = [ testF1 "countColors test" countColors
              , ([Green, Blue, Green, Orange], [0, 2, 1, 0, 1, 0])
              ]
            , testF2 "matches test" matches
-             [ ([Red, Blue, Yellow, Orange], [Red, Orange, Orange, Blue], 3) ]
+             [ ([Red, Blue, Yellow, Orange], [Red, Orange, Orange, Blue], 3)
+             , ([], [], 0)
+             , ([Red, Blue, Yellow, Orange], [], 0)
+             , ([Red], [Green], 0)
+             , ([Red], [Red], 1)
+             , ([Red, Blue], [Green, Green], 0)
+             , ([Red, Blue], [Blue, Green], 1)
+             , ([Red, Red], [Red, Blue], 1)
+             , ([Red, Red], [Red, Red], 2)
+             , ([Red, Red, Red], [Red, Red], 2)
+             , ([Red, Green, Blue], [Green, Blue, Red], 3)
+             ]
            ]
 
 -- Exercise 3 -----------------------------------------
