@@ -44,7 +44,8 @@ matches ps qs = sum . map (uncurry min) $ zip (countColors ps) (countColors qs)
 
 -- Construct a Move from a guess given the actual code
 getMove :: Code -> Code -> Move
-getMove = undefined
+getMove s c = Move c (exactMatches s c) (nonExactMatches s c)
+    where nonExactMatches t d = matches t d - exactMatches t d
 
 -- Exercise 4 -----------------------------------------
 

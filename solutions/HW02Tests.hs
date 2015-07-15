@@ -46,8 +46,23 @@ ex2Tests = [ testF1 "countColors test" countColors
 
 ex3Tests :: [Test]
 ex3Tests = [ testF2 "getMove test" getMove
-             [ ([Red, Blue, Yellow, Orange], [Red, Orange, Orange, Blue],
-               Move [Red, Orange, Orange, Blue] 1 2)
+             [ ( [], [], Move [] 0 0 )
+             , ( [Red], [Blue], Move [Blue] 0 0 )
+             , ( [Red, Blue], [Blue, Red], Move [Blue, Red] 0 2 )
+             , ( [Red, Blue], [Blue], Move [Blue] 0 1 )
+             , ( [Red, Blue], [Red], Move [Red] 1 0 )
+             , ( [Red, Blue, Red, Blue]
+               , [Blue, Red, Blue, Red]
+               , Move [Blue, Red, Blue, Red] 0 4
+               )
+             , ( [Red, Blue, Yellow, Orange]
+               , [Red, Orange, Orange, Blue]
+               , Move [Red, Orange, Orange, Blue] 1 2
+               )
+             , ( [Blue, Green, Orange, Red]
+               , [Blue, Red, Green, Orange]
+               , Move [Blue, Red, Green, Orange] 1 3
+               )
              ]
            ]
 
