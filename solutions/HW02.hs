@@ -59,7 +59,8 @@ isConsistent m@(Move c _ _) s = m == getMove s c
 -- Exercise 5 -----------------------------------------
 
 filterCodes :: Move -> [Code] -> [Code]
-filterCodes = undefined
+filterCodes = filter . isConsistent
+         -- m = filter (isConsistent m)
 
 -- Exercise 6 -----------------------------------------
 
