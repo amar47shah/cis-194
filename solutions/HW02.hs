@@ -38,7 +38,10 @@ countColors ps = map (\c -> length . filter (== c) $ ps) colors
 -- Count number of matches between the actual code and the guess
 matches :: Code -> Code -> Int
 matches ps qs = sum . map (uncurry min) $ zip (countColors ps) (countColors qs)
-      --ps = sum . map (uncurry min) . (zip . countColors $ ps) . countColors
+     -- ps = sum . map (uncurry min) . (zip . countColors $ ps) . countColors
+     -- = (sum .) . ((map (uncurry min) .) . ((. countColors) . (zip . countColors)))
+     -- using Control.Arrow ((***)):
+     -- = (sum .) . ((map (uncurry min) .) . (uncurry zip .) . curry (countColors *** countColors))
 
 -- Exercise 3 -----------------------------------------
 
