@@ -40,6 +40,7 @@ matches :: Code -> Code -> Int
 matches ps qs = sum . map (uncurry min) $ zip (countColors ps) (countColors qs)
      -- ps = sum . map (uncurry min) . (zip . countColors $ ps) . countColors
      -- = (sum .) . ((map (uncurry min) .) . ((. countColors) . (zip . countColors)))
+     -- = (sum .) . ((map (uncurry min) .) . (flip (.) (zip . countColors) (. countColors)))
      -- using Control.Arrow ((***)):
      -- = (sum .) . ((map (uncurry min) .) . (uncurry zip .) . curry (countColors *** countColors))
 
