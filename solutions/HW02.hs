@@ -54,7 +54,7 @@ getMove s c = Move c (exactMatches s c) (nonExactMatches s c)
 -- Exercise 4 -----------------------------------------
 
 isConsistent :: Move -> Code -> Bool
-isConsistent = undefined
+isConsistent m@(Move c _ _) s = m == getMove s c
 
 -- Exercise 5 -----------------------------------------
 
