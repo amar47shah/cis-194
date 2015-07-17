@@ -110,7 +110,15 @@ ex6Tests = [ testF1 "allCodes test" allCodes
 -- Exercise 7 -----------------------------------------
 
 ex7Tests :: [Test]
-ex7Tests = []
+ex7Tests =  [ testF1 "solve test" solve
+              [ ([], [])
+              , ([Red], [Move [Red] 1 0])
+              , ([Yellow], [Move [Red] 0 0,Move [Green] 0 0,Move [Blue] 0 0,Move [Yellow] 1 0])
+              , ([Red, Blue], [Move [Red,Red] 1 0,Move [Red,Green] 1 0,Move [Red,Blue] 2 0])
+              , ([Green, Green], [Move [Red,Red] 0 0,Move [Green,Green] 2 0])
+              , ([Red, Green, Blue], [Move [Red,Red,Red] 1 0,Move [Red,Green,Green] 2 0,Move [Red,Green,Blue] 3 0])
+              ]
+            ]
 
 -- Bonus ----------------------------------------------
 
@@ -127,5 +135,5 @@ allTests = concat [ ex1Tests
                   , ex5Tests
                   , ex6Tests
                   , ex7Tests
-                  , bonusTests
+                  --, bonusTests
                   ]
