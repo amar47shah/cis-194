@@ -70,6 +70,10 @@ allCodes 1         = map (:[]) colors
 allCodes n         = longerByOne. allCodes . pred $ n
     where longerByOne = concatMap $ \code -> [ code ++ [peg] | peg <- colors ]
 
+--with Data.Sequence.replicateM and Data.Foldable.toList
+--allCodes 0 = []
+--allCodes n = map toList . replicateM n $ colors
+
 -- Exercise 7 -----------------------------------------
 
 solve :: Code -> [Move]
