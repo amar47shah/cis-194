@@ -67,7 +67,7 @@ filterCodes = filter . isConsistent
 allCodes :: Int -> [Code]
 allCodes n | n < 1 = []
 allCodes 1         = map (:[]) colors
-allCodes n         = longerByOne. allCodes . pred $ n
+allCodes n         = longerByOne . allCodes . pred $ n
     where longerByOne = concatMap $ \code -> [ code ++ [peg] | peg <- colors ]
 
 --with Data.Sequence.replicateM and Data.Foldable.toList
