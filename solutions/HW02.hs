@@ -65,7 +65,10 @@ filterCodes = filter . isConsistent
 -- Exercise 6 -----------------------------------------
 
 allCodes :: Int -> [Code]
-allCodes = undefined
+allCodes n | n < 1 = []
+allCodes 1         = map (:[]) colors
+allCodes n         = longerByOne. allCodes . pred $ n
+    where longerByOne = concatMap $ \code -> [ code ++ [peg] | peg <- colors ]
 
 -- Exercise 7 -----------------------------------------
 

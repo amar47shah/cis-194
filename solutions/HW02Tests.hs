@@ -6,7 +6,7 @@ module HW02Tests where
 
 import HW02
 import Testing
-
+import Data.List (sort)
 
 -- Exercise 1 -----------------------------------------
 
@@ -90,7 +90,22 @@ ex5Tests = [ testF2 "filterCodes test" filterCodes
 -- Exercise 6 -----------------------------------------
 
 ex6Tests :: [Test]
-ex6Tests = []
+ex6Tests = [ testF1 "allCodes test" allCodes
+             [ (0, [])
+             , (1, [[Red],[Green],[Blue],[Yellow],[Orange],[Purple]])
+             , (2, [[Red,   Red],[Red,   Green],[Red,   Blue],[Red,   Yellow],[Red,   Orange],[Red,   Purple]
+                   ,[Green, Red],[Green, Green],[Green, Blue],[Green, Yellow],[Green, Orange],[Green, Purple]
+                   ,[Blue,  Red],[Blue,  Green],[Blue,  Blue],[Blue,  Yellow],[Blue,  Orange],[Blue,  Purple]
+                   ,[Yellow,Red],[Yellow,Green],[Yellow,Blue],[Yellow,Yellow],[Yellow,Orange],[Yellow,Purple]
+                   ,[Orange,Red],[Orange,Green],[Orange,Blue],[Orange,Yellow],[Orange,Orange],[Orange,Purple]
+                   ,[Purple,Red],[Purple,Green],[Purple,Blue],[Purple,Yellow],[Purple,Orange],[Purple,Purple]
+                   ]
+               )
+             , (3, sort . concatMap (\c -> map (++[c]) (allCodes 2)) $ colors)
+             ]
+           , testF1 "length . allCodes test" (length . allCodes)
+             [(0,0),(1,6),(2,36),(3,216),(4,1296),(5,7776),(6,46656),(7,279936)]
+           ]
 
 -- Exercise 7 -----------------------------------------
 
