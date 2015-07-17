@@ -77,7 +77,7 @@ allCodes n         = longerByOne . allCodes . pred $ n
 -- Exercise 7 -----------------------------------------
 
 solve :: Code -> [Move]
-solve s = reverse . snd $ solveHelper (getMove s) (allCodes . length $ s, [])
+solve s = reverse . snd . solveHelper (getMove s) $ (allCodes . length $ s, [])
 
 solveHelper :: (Code -> Move) -> ([Code], [Move]) -> ([Code], [Move])
 solveHelper _ t@([], _) = t
