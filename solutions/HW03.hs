@@ -7,14 +7,14 @@ data Expression =
   deriving (Show, Eq)
 
 -- Binary (2-input) operators
-data Bop = 
-    Plus     
-  | Minus    
-  | Times    
-  | Divide   
+data Bop =
+    Plus
+  | Minus
+  | Times
+  | Divide
   | Gt
-  | Ge       
-  | Lt  
+  | Ge
+  | Lt
   | Le
   | Eql
   deriving (Show, Eq)
@@ -23,9 +23,9 @@ data Statement =
     Assign   String     Expression
   | Incr     String
   | If       Expression Statement  Statement
-  | While    Expression Statement       
+  | While    Expression Statement
   | For      Statement  Expression Statement Statement
-  | Sequence Statement  Statement        
+  | Sequence Statement  Statement
   | Skip
   deriving (Show, Eq)
 
