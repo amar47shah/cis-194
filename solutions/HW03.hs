@@ -38,9 +38,9 @@ instance Show (a -> b) where
 -- Exercise 1 -----------------------------------------
 
 extend :: State -> String -> Int -> State
-extend state s i s'
- | s' == s   = i
- | otherwise = state s'
+extend s var val var'
+ | var' == var = val
+ | otherwise   = s var'
 
 empty :: State
 empty _ = 0
