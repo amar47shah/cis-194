@@ -55,6 +55,19 @@ ex2Tests = [ testF2 "evalE test" evalE
              ]
            ]
 
+ex3Tests :: [Test]
+ex3Tests = [ testF1 "desugar test" desugar
+             [ ( factorial
+               , DSequence
+                   (DAssign "Out" (Val 1))
+                   (DWhile (Op (Var "In") Gt (Val 0))
+                           (DSequence
+                              (DAssign "Out" (Op (Var "In") Times (Var "Out")))
+                              (DAssign "In" (Op (Var "In") Minus (Val 1)))))
+               )
+             ]
+           ]
+
 -- All Tests ------------------------------------------
 
 allTests :: [Test]
