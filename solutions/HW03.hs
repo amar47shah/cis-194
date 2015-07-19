@@ -31,13 +31,19 @@ data Statement =
 
 type State = String -> Int
 
+-- Needed for testing
+instance Show (a -> b) where
+  show _ = "function"
+
 -- Exercise 1 -----------------------------------------
 
 extend :: State -> String -> Int -> State
-extend = undefined
+extend state s i s'
+ | s' == s   = i
+ | otherwise = state s'
 
 empty :: State
-empty = undefined
+empty _ = 0
 
 -- Exercise 2 -----------------------------------------
 
