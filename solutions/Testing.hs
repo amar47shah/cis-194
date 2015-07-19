@@ -32,3 +32,8 @@ testF2 s f l = Test s (uncurry (==)) $ map (\(x, y, z) -> (f x y, z))  l
 testF3 :: (Show a, Show b, Show c, Show d, Eq d) => String -> (a -> b -> c -> d)
        -> [(a, b, c, d)] -> Test
 testF3 s f l = Test s (uncurry (==)) $ map (\(w, x, y, z) ->  (f w x y, z)) l
+
+testF4 :: (Show a, Show b, Show c, Show d, Show e, Eq e) =>
+       String -> (a -> b -> c -> d -> e) -> [(a, b, c, d, e)] -> Test
+testF4 s f l = Test s (uncurry (==)) $
+               map (\(v, w, x, y, z) -> (f v w x y, z)) l
