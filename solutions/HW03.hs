@@ -48,7 +48,24 @@ empty _ = 0
 -- Exercise 2 -----------------------------------------
 
 evalE :: State -> Expression -> Int
-evalE = undefined
+evalE s (Var var)      = s var
+evalE _ (Val val)      = val
+evalE s (Op lhs b rhs) = let e = evalE s lhs in
+  case b of
+      Plus   -> (e +)
+      Minus  -> (e -)
+      Times  -> (e *)
+      Divide -> (e `div`)
+      Gt     -> boolToInt . (e >)
+      Ge     -> boolToInt . (e >=)
+      Lt     -> boolToInt . (e <)
+      Le     -> boolToInt . (e <=)
+      Eql    -> boolToInt . (e ==)
+  $ evalE s rhs
+
+boolToInt :: Bool -> Int
+boolToInt False = 0
+boolToInt True  = 1
 
 -- Exercise 3 -----------------------------------------
 
