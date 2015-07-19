@@ -89,12 +89,28 @@ desugar  Skip           = DSkip
 -- Exercise 4 -----------------------------------------
 
 evalSimple :: State -> DietStatement -> State
-evalSimple = undefined
+evalSimple s (DAssign v e)    = extend s v $ evalE s e
+evalSimple s (DIf e d d')     = if trueE s e
+                                then evalSimple s d
+                                else evalSimple s d'
+evalSimple s w@(DWhile e d)   = if trueE s e
+                                then evalSimple s (DSequence d w)
+                                else evalSimple s DSkip
+evalSimple s (DSequence d d') = evalSimple (evalSimple s d) d'
+evalSimple s  DSkip           = s
 
 run :: State -> Statement -> State
-run = undefined
+run = (. desugar) . evalSimple
+
+trueE :: State -> Expression -> Bool
+trueE = ((0 /=) .) . evalE
 
 -- Programs -------------------------------------------
+
+exec :: Statement -> Int -> Int
+exec statement input = finalState "Out"
+    where finalState = run initialState statement
+          initialState = extend empty "In" input
 
 slist :: [Statement] -> Statement
 slist [] = Skip
@@ -115,17 +131,17 @@ factorial = For (Assign "Out" (Val 1))
 
 {- Calculate the floor of the square root of the input
 
-   B := 0;
-   while (A >= B * B) {
-     B++
+   Out := 0;
+   while (In >= Out * Out) {
+     Out++
    };
-   B := B - 1
+   Out := Out - 1
 -}
 squareRoot :: Statement
-squareRoot = slist [ Assign "B" (Val 0)
-                   , While (Op (Var "A") Ge (Op (Var "B") Times (Var "B")))
-                       (Incr "B")
-                   , Assign "B" (Op (Var "B") Minus (Val 1))
+squareRoot = slist [ Assign "Out" (Val 0)
+                   , While (Op (Var "In") Ge (Op (Var "Out") Times (Var "Out")))
+                       (Incr "Out")
+                   , Assign "Out" (Op (Var "Out") Minus (Val 1))
                    ]
 
 {- Calculate the nth Fibonacci number

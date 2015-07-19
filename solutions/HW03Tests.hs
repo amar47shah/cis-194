@@ -55,6 +55,8 @@ ex2Tests = [ testF2 "evalE test" evalE
              ]
            ]
 
+-- Exercise 3 -----------------------------------------
+
 ex3Tests :: [Test]
 ex3Tests = [ testF1 "desugar test" desugar
              [ ( factorial
@@ -68,9 +70,22 @@ ex3Tests = [ testF1 "desugar test" desugar
              ]
            ]
 
+-- Exercise 4 -----------------------------------------
+
+ex4Tests :: [Test]
+ex4Tests = [ testF1 "factorial test" (map $ exec factorial)
+             [([1..10], [1,2,6,24,120,720,5040,40320,362880,3628800])]
+           , testF1 "fibonacci test" (map $ exec fibonacci)
+             [([1..10], [1,2,3,5,8,13,21,34,55,89])]
+           , testF1 "squareRoot test" (map $ exec squareRoot)
+             [([ n ^ 2 | n <- [1..10] ], [1..10])]
+           ]
+
 -- All Tests ------------------------------------------
 
 allTests :: [Test]
 allTests = concat [ ex1Tests
                   , ex2Tests
+                  , ex3Tests
+                  , ex4Tests
                   ]
