@@ -1,6 +1,8 @@
 {-# OPTIONS_GHC -Wall #-}
 module HW04 where
 
+import Data.List (dropWhileEnd)
+
 newtype Poly a = P [a]
 
 -- Exercise 1 -----------------------------------------
@@ -11,7 +13,10 @@ x = P [0, 1]
 -- Exercise 2 ----------------------------------------
 
 instance (Num a, Eq a) => Eq (Poly a) where
-    (==) = undefined
+    P xs == P ys = dropTrailingZeros xs == dropTrailingZeros ys
+
+dropTrailingZeros :: (Num a, Eq a) => [a] -> [a]
+dropTrailingZeros = dropWhileEnd (== 0)
 
 -- Exercise 3 -----------------------------------------
 
