@@ -2,37 +2,49 @@
 module HW04 where
 
 import Data.Function (on)
-import Data.List (dropWhileEnd)
+import Data.List (dropWhileEnd, intersperse)
 
 newtype Poly a = P [a]
 
 -- Exercise 1 -----------------------------------------
 
-x :: Num a => Poly a
-x = P [0, 1]
+example :: Num a => Poly a
+example = P [0, 1]
 
 -- Exercise 2 ----------------------------------------
 
 instance (Num a, Eq a) => Eq (Poly a) where
-    (==) = (==) `on` dropTrailingZeros . fromPoly
+    (==) = (==) `on` fromPoly
 
-fromPoly :: Poly a -> [a]
-fromPoly (P xs) = xs
-
-dropTrailingZeros :: (Num a, Eq a) => [a] -> [a]
-dropTrailingZeros = dropWhileEnd (== 0)
+fromPoly :: (Num a, Eq a) => Poly a -> [a]
+fromPoly (P (x:xs)) = x : dropWhileEnd (== 0) xs
+fromPoly (P _     ) = 0 : []
 
 -- Exercise 3 -----------------------------------------
 
 instance (Num a, Eq a, Show a) => Show (Poly a) where
-    show = undefined
+    show = concat . intersperse " + " . reverse . toTerms
+
+toTerms :: (Num a, Eq a, Show a) => Poly a -> [String]
+toTerms = removeZeroes . filter (not . null) .
+          (map (uncurry toTerm) .) zipWithIndex . fromPoly
+
+removeZeroes :: [String] -> [String]
+removeZeroes xs@(_:_:_) = dropWhile (== "0") xs
+removeZeroes xs = xs
+
+zipWithIndex :: [b] -> [(Integer, b)]
+zipWithIndex = zip [0..]
 
 toTerm :: (Num a, Eq a, Show a, Num b, Eq b, Show b) => a -> b -> String
-toTerm 0 c = show c
-toTerm 1 1 =           "x"
-toTerm 1 c = show c ++ "x"
-toTerm d 1 =           "x^" ++ show d
-toTerm d c = show c ++ "x^" ++ show d
+toTerm 0   c  = show c
+toTerm _   0  =           ""
+toTerm 1 (-1) =           "-x"
+toTerm 1   1  =            "x"
+toTerm 1   c  = show c ++  "x"
+toTerm d (-1) =           "-x^" ++ show d
+toTerm d   1  =            "x^" ++ show d
+toTerm d   c  = show c ++  "x^" ++ show d
 
 -- Exercise 4 -----------------------------------------
 
