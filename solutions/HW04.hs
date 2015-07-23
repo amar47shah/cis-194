@@ -49,7 +49,20 @@ toTerm d   c  = show c ++  "x^" ++ show d
 -- Exercise 4 -----------------------------------------
 
 plus :: Num a => Poly a -> Poly a -> Poly a
-plus = undefined
+plus (P xs) (P ys) = P . uncurry (zipWith (+)) $ paddedSummands xs ys
+
+padr :: a -> Int -> [a] -> [a]
+padr x n xs = xs ++ replicate n x
+
+padLength :: [a] -> [a] -> Int
+padLength xs ys = (max `on` length) xs ys - (min `on` length) xs ys
+
+paddedSummands :: (Num a) => [a] -> [a] -> ([a], [a])
+paddedSummands xs ys
+     | length xs > length ys = (xs, pad ys)
+     | otherwise             = (pad xs, ys)
+  where pad = padr 0 $ padLength xs ys
+
 
 -- Exercise 5 -----------------------------------------
 
