@@ -27,6 +27,13 @@ dropTrailingZeros = dropWhileEnd (== 0)
 instance (Num a, Eq a, Show a) => Show (Poly a) where
     show = undefined
 
+toTerm :: (Num a, Eq a, Show a, Num b, Eq b, Show b) => a -> b -> String
+toTerm 0 c = show c
+toTerm 1 1 =           "x"
+toTerm 1 c = show c ++ "x"
+toTerm d 1 =           "x^" ++ show d
+toTerm d c = show c ++ "x^" ++ show d
+
 -- Exercise 4 -----------------------------------------
 
 plus :: Num a => Poly a -> Poly a -> Poly a
