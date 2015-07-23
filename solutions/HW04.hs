@@ -14,7 +14,10 @@ x = P [0, 1]
 -- Exercise 2 ----------------------------------------
 
 instance (Num a, Eq a) => Eq (Poly a) where
-    P xs == P ys = ((==) `on` dropTrailingZeros) xs ys
+    (==) = (==) `on` dropTrailingZeros . fromPoly
+
+fromPoly :: Poly a -> [a]
+fromPoly (P xs) = xs
 
 dropTrailingZeros :: (Num a, Eq a) => [a] -> [a]
 dropTrailingZeros = dropWhileEnd (== 0)
