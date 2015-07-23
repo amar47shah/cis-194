@@ -26,12 +26,12 @@ instance (Num a, Eq a, Show a) => Show (Poly a) where
     show = concat . intersperse " + " . reverse . toTerms
 
 toTerms :: (Num a, Eq a, Show a) => Poly a -> [String]
-toTerms = removeZeroes . filter (not . null) .
+toTerms = removeZeroTerm . filter (not . null) .
           (map (uncurry toTerm) .) zipWithIndex . fromPoly
 
-removeZeroes :: [String] -> [String]
-removeZeroes xs@(_:_:_) = dropWhile (== "0") xs
-removeZeroes xs = xs
+removeZeroTerm:: [String] -> [String]
+removeZeroTerm ("0":xs@(_:_)) = xs
+removeZeroTerm xs             = xs
 
 zipWithIndex :: [b] -> [(Integer, b)]
 zipWithIndex = zip [0..]
