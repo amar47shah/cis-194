@@ -69,6 +69,9 @@ paddedSummands xs ys
 times :: Num a => Poly a -> Poly a -> Poly a
 times = undefined
 
+padl :: a -> Int -> [a] -> [a]
+padl x n xs = replicate n x ++ xs
+
 -- Exercise 6 -----------------------------------------
 
 instance Num a => Num (Poly a) where
