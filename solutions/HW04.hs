@@ -98,10 +98,12 @@ applyP (P cs) arg = fst $ foldl' (acc arg) (0, 0 :: Int) cs
 class Num a => Differentiable a where
     deriv  :: a -> a
     nderiv :: Int -> a -> a
-    nderiv = undefined
+    nderiv n | n > 0 = nderiv (n - 1) . deriv
+    nderiv _         = id
 
 -- Exercise 9 -----------------------------------------
 
 instance Num a => Differentiable (Poly a) where
-    deriv = undefined
-
+    deriv (P [])     = P [0]
+    deriv (P (_:cs)) = P . map diffTerm $ zipWithIndex cs
+        where diffTerm (d, c) = fromIntegral (d + 1) * c
