@@ -81,7 +81,7 @@ timesScalar (P xs) x = P . map (* x) $ xs
 instance Num a => Num (Poly a) where
     (+) = plus
     (*) = times
-    negate      = undefined
+    negate (P xs) = P . map negate $ xs
     fromInteger = P . (: []) . fromInteger
     -- No meaningful definitions exist
     abs    = undefined

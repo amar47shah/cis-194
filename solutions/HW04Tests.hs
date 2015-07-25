@@ -70,6 +70,19 @@ ex5Tests = [ testF2 "times test" times
              ]
            ]
 
+-- Exercise 6 -----------------------------------------
+
+ex6Tests :: [Test]
+ex6Tests = [ testF1 "negate test" negate
+             [ (P [0], P [0])
+             , (P [1], P [-1])
+             , (P [-1], P [1])
+             , (P [1,2,3], P[-1,-2,-3])
+             , (P[-1,-2,-3], P [1,2,3])
+             , (P [-1,2,-3], P [1,-2,3])
+             ]
+           ]
+
 -- All Tests ------------------------------------------
 
 allTests :: [Test]
@@ -77,4 +90,5 @@ allTests = concat [ ex2Tests
                   , ex3Tests
                   , ex4Tests
                   , ex5Tests
+                  , ex6Tests
                   ]
