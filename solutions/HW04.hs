@@ -8,8 +8,8 @@ newtype Poly a = P [a]
 
 -- Exercise 1 -----------------------------------------
 
-example :: Num a => Poly a
-example = P [0, 1]
+x :: Num a => Poly a
+x = P [0, 1]
 
 -- Exercise 2 ----------------------------------------
 
@@ -17,7 +17,7 @@ instance (Num a, Eq a) => Eq (Poly a) where
     (==) = (==) `on` fromPoly
 
 fromPoly :: (Num a, Eq a) => Poly a -> [a]
-fromPoly (P (x:xs)) = x : dropWhileEnd (== 0) xs
+fromPoly (P (c:cs)) = c : dropWhileEnd (== 0) cs
 fromPoly (P _     ) = 0 : []
 
 -- Exercise 3 -----------------------------------------
@@ -30,8 +30,8 @@ toTerms = dropZeroTerm . filter (not . null) .
           (map (uncurry toTerm) .) zipWithIndex . fromPoly
 
 dropZeroTerm:: [String] -> [String]
-dropZeroTerm ("0":xs@(_:_)) = xs
-dropZeroTerm xs             = xs
+dropZeroTerm ("0":ts@(_:_)) = ts
+dropZeroTerm ts             = ts
 
 zipWithIndex :: [b] -> [(Int, b)]
 zipWithIndex = zip [0..]
@@ -49,39 +49,39 @@ toTerm d   c  = show c ++  "x^" ++ show d
 -- Exercise 4 -----------------------------------------
 
 plus :: Num a => Poly a -> Poly a -> Poly a
-plus (P xs) (P ys) = P . uncurry (zipWith (+)) $ paddedSummands xs ys
+plus (P cs) (P ds) = P . uncurry (zipWith (+)) $ paddedSummands cs ds
 
 padr :: a -> Int -> [a] -> [a]
-padr x n xs = xs ++ replicate n x
+padr c n cs = cs ++ replicate n c
 
 padLength :: [a] -> [a] -> Int
-padLength xs ys = (max `on` length) xs ys - (min `on` length) xs ys
+padLength cs ds = (max `on` length) cs ds - (min `on` length) cs ds
 
 paddedSummands :: (Num a) => [a] -> [a] -> ([a], [a])
-paddedSummands xs ys
-     | length xs > length ys = (xs, pad ys)
-     | otherwise             = (pad xs, ys)
-  where pad = padr 0 $ padLength xs ys
+paddedSummands cs ds
+     | length cs > length ds = (cs, pad ds)
+     | otherwise             = (pad cs, ds)
+  where pad = padr 0 $ padLength cs ds
 
 
 -- Exercise 5 -----------------------------------------
 
 times :: Num a => Poly a -> Poly a -> Poly a
-times p (P xs) = sum . map (uncurry $ timesTerm p) $ zipWithIndex xs
-    where timesTerm (P ys) d = timesScalar . P $ padl 0 d ys
+times p (P cs) = sum . map (uncurry $ timesTerm p) $ zipWithIndex cs
+    where timesTerm (P cs') d = timesScalar . P $ padl 0 d cs'
 
 padl :: a -> Int -> [a] -> [a]
-padl x n xs = replicate n x ++ xs
+padl c n cs = replicate n c ++ cs
 
 timesScalar :: Num a => Poly a -> a -> Poly a
-timesScalar (P xs) x = P . map (* x) $ xs
+timesScalar (P cs) s = P . map (* s) $ cs
 
 -- Exercise 6 -----------------------------------------
 
 instance Num a => Num (Poly a) where
     (+) = plus
     (*) = times
-    negate (P xs) = P . map negate $ xs
+    negate (P cs) = P . map negate $ cs
     fromInteger = P . (: []) . fromInteger
     -- No meaningful definitions exist
     abs    = undefined
