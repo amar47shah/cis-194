@@ -83,6 +83,23 @@ ex6Tests = [ testF1 "negate test" negate
              ]
            ]
 
+-- Exercise 7 -----------------------------------------
+
+ex7Tests :: [Test]
+ex7Tests = [ testF2 "applyP test" applyP
+             [ (P [0], 0, 0)
+             , (P [0,2,3], 0, 0)
+             , (P [5], 1, 5)
+             , (P [5], -3, 5)
+             , (P [0,1], 2, 2)
+             , (P [0,1], -3, -3)
+             , (P [1,1,1], 1, 3)
+             , (P [1,1,1], -1, 1)
+             , (P [1,1,1], 2, 7)
+             , (P [1,1,1], -2, 3)
+             ]
+           ]
+
 -- All Tests ------------------------------------------
 
 allTests :: [Test]
@@ -91,4 +108,5 @@ allTests = concat [ ex2Tests
                   , ex4Tests
                   , ex5Tests
                   , ex6Tests
+                  , ex7Tests
                   ]

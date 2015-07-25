@@ -2,7 +2,7 @@
 module HW04 where
 
 import Data.Function (on)
-import Data.List (dropWhileEnd, intersperse)
+import Data.List (dropWhileEnd, foldl', intersperse)
 
 newtype Poly a = P [a]
 
@@ -90,7 +90,8 @@ instance Num a => Num (Poly a) where
 -- Exercise 7 -----------------------------------------
 
 applyP :: Num a => Poly a -> a -> a
-applyP = undefined
+applyP (P cs) arg = fst $ foldl' (acc arg) (0, 0 :: Int) cs
+    where acc arg' (s, d) c = (s + c * arg'^d, d + 1)
 
 -- Exercise 8 -----------------------------------------
 
