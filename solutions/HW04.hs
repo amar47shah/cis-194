@@ -67,8 +67,8 @@ paddedSummands cs ds
 -- Exercise 5 -----------------------------------------
 
 times :: Num a => Poly a -> Poly a -> Poly a
-times p (P cs) = sum . map (uncurry $ timesTerm p) $ zipWithIndex cs
-    where timesTerm (P cs') d = timesScalar . P $ padl 0 d cs'
+times p (P cs) = sum . map (timesTerm p) $ zipWithIndex cs
+    where timesTerm (P cs') (d, c) = timesScalar (P $ padl 0 d cs') c
 
 padl :: a -> Int -> [a] -> [a]
 padl c n cs = replicate n c ++ cs
