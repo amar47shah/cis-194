@@ -72,6 +72,9 @@ times = undefined
 padl :: a -> Int -> [a] -> [a]
 padl x n xs = replicate n x ++ xs
 
+timesScalar :: Num a => Poly a -> a -> Poly a
+timesScalar (P xs) x = P . map (* x) $ xs
+
 -- Exercise 6 -----------------------------------------
 
 instance Num a => Num (Poly a) where
