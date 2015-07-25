@@ -33,7 +33,7 @@ dropZeroTerm:: [String] -> [String]
 dropZeroTerm ("0":xs@(_:_)) = xs
 dropZeroTerm xs             = xs
 
-zipWithIndex :: [b] -> [(Integer, b)]
+zipWithIndex :: [b] -> [(Int, b)]
 zipWithIndex = zip [0..]
 
 toTerm :: (Num a, Eq a, Show a, Num b, Eq b, Show b) => a -> b -> String
@@ -67,7 +67,8 @@ paddedSummands xs ys
 -- Exercise 5 -----------------------------------------
 
 times :: Num a => Poly a -> Poly a -> Poly a
-times = undefined
+times p (P xs) = sum . map (uncurry $ timesTerm p) $ zipWithIndex xs
+    where timesTerm (P ys) d = timesScalar . P $ padl 0 d ys
 
 padl :: a -> Int -> [a] -> [a]
 padl x n xs = replicate n x ++ xs
