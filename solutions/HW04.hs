@@ -27,7 +27,7 @@ instance (Num a, Eq a, Show a) => Show (Poly a) where
 
 toTerms :: (Num a, Eq a, Show a) => Poly a -> [String]
 toTerms = dropZeroTerm . filter (not . null) .
-          (map (uncurry toTerm) .) zipWithIndex . fromPoly
+          (map toTerm .) zipWithIndex . fromPoly
 
 dropZeroTerm:: [String] -> [String]
 dropZeroTerm ("0":ts@(_:_)) = ts
@@ -36,15 +36,15 @@ dropZeroTerm ts             = ts
 zipWithIndex :: [b] -> [(Int, b)]
 zipWithIndex = zip [0..]
 
-toTerm :: (Num a, Eq a, Show a, Num b, Eq b, Show b) => a -> b -> String
-toTerm 0   c  = show c
-toTerm _   0  =           ""
-toTerm 1 (-1) =           "-x"
-toTerm 1   1  =            "x"
-toTerm 1   c  = show c ++  "x"
-toTerm d (-1) =           "-x^" ++ show d
-toTerm d   1  =            "x^" ++ show d
-toTerm d   c  = show c ++  "x^" ++ show d
+toTerm :: (Num a, Eq a, Show a) => (Int, a) -> String
+toTerm (0,  c) = show c
+toTerm (_,  0) =           ""
+toTerm (1, -1) =           "-x"
+toTerm (1,  1) =            "x"
+toTerm (1,  c) = show c ++  "x"
+toTerm (d, -1) =           "-x^" ++ show d
+toTerm (d,  1) =            "x^" ++ show d
+toTerm (d,  c) = show c ++  "x^" ++ show d
 
 -- Exercise 4 -----------------------------------------
 
