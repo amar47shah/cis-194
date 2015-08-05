@@ -30,6 +30,15 @@ decryptWithKey key outPath = do
   decoded <- return . BS.pack $ uncurry xor <$> BS.zip encoded (BS.cycle key)
   BS.writeFile outPath decoded
 
+-- Apply what we've accomplished so far.
+writeVictims :: IO ()
+writeVictims = do
+  let origPath   = "../resources/clues/dog-original.jpg"
+  let modPath    = "../resources/clues/dog.jpg"
+  let resultPath = "../resources/clues/victims.json"
+  key <- getSecret origPath modPath
+  decryptWithKey key resultPath
+
 -- Exercise 3 -----------------------------------------
 
 parseFile :: FromJSON a => FilePath -> IO (Maybe a)
