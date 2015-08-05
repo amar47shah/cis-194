@@ -24,7 +24,11 @@ getSecret origPath modPath = do
 -- Exercise 2 -----------------------------------------
 
 decryptWithKey :: ByteString -> FilePath -> IO ()
-decryptWithKey = undefined
+decryptWithKey key outPath = do
+  let inPath = outPath ++ ".enc"
+  encoded <- BS.readFile inPath
+  decoded <- return . BS.pack $ uncurry xor <$> BS.zip encoded (BS.cycle key)
+  BS.writeFile outPath decoded
 
 -- Exercise 3 -----------------------------------------
 
