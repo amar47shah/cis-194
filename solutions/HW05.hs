@@ -6,6 +6,7 @@ import Data.Bits (xor)
 import Data.ByteString.Lazy (ByteString)
 import Data.Functor ((<$>))
 import Data.Map.Strict (Map)
+import GHC.Word (Word8)
 import System.Environment (getArgs)
 
 import qualified Data.ByteString.Lazy as BS
@@ -13,13 +14,19 @@ import qualified Data.Map.Strict as Map
 
 import Parser
 
+decodedBytes :: ByteString -> ByteString -> [Word8]
+decodedBytes
+             xs ys = uncurry xor <$> BS.zip xs ys
+          -- = (((uncurry xor) <$>) .) . BS.zip
+          -- = (fmap (uncurry xor) .) . BS.zip
+
 -- Exercise 1 -----------------------------------------
 
 getSecret :: FilePath -> FilePath -> IO ByteString
 getSecret origPath modPath = do
   original <- BS.readFile origPath
   modified <- BS.readFile modPath
-  return . BS.pack . filter (/= 0) $ uncurry xor <$> BS.zip original modified
+  return . BS.pack . filter (/= 0) $ decodedBytes original modified
 
 -- Exercise 2 -----------------------------------------
 
@@ -27,7 +34,7 @@ decryptWithKey :: ByteString -> FilePath -> IO ()
 decryptWithKey key outPath = do
   let inPath = outPath ++ ".enc"
   encoded <- BS.readFile inPath
-  decoded <- return . BS.pack $ uncurry xor <$> BS.zip encoded (BS.cycle key)
+  decoded <- return . BS.pack . decodedBytes encoded $ BS.cycle key
   BS.writeFile outPath decoded
 
 -- Apply what we've accomplished so far.
