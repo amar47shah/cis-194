@@ -51,7 +51,23 @@ writeVictims = do
 -- Exercise 3 -----------------------------------------
 
 parseFile :: FromJSON a => FilePath -> IO (Maybe a)
-parseFile = undefined
+parseFile = (decode <$>) . BS.readFile
+
+-- in pointed notation
+parseFile' :: FromJSON a => FilePath -> IO (Maybe a)
+parseFile' jsonPath = decode <$> BS.readFile jsonPath
+
+-- in do-notation
+parseFile'' :: FromJSON a => FilePath -> IO (Maybe a)
+parseFile'' jsonPath = do
+  json <- BS.readFile jsonPath
+  return $ decode json
+
+transactions :: IO (Maybe [Transaction])
+transactions = parseFile "../resources/clues/transactions.json"
+
+victims :: IO (Maybe [TId])
+victims = parseFile "../resources/clues/victims.json"
 
 -- Exercise 4 -----------------------------------------
 
