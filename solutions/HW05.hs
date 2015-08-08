@@ -84,7 +84,7 @@ badTs :: IO (Maybe [Transaction])
 badTs = getBadTs "../resources/clues/victims.json"
                  "../resources/clues/transactions.json"
 
-testBadTsAndVictimsHaveEqualSize :: IO (Bool)
+testBadTsAndVictimsHaveEqualSize :: IO Bool
 testBadTsAndVictimsHaveEqualSize = do
   Just ts <- badTs
   Just vs <- victims
@@ -111,7 +111,13 @@ damage' = do Just ts <- badTs
 -- Exercise 6 -----------------------------------------
 
 getCriminal :: Map String Integer -> String
-getCriminal = undefined
+getCriminal = fst . Map.foldrWithKey sniff ("Unknown", 0)
+  where sniff member flow (thief, haul)
+         | flow > haul = (member, flow)
+         | otherwise   = (thief, haul)
+
+criminal :: IO String
+criminal = getCriminal <$> damage
 
 -- Exercise 7 -----------------------------------------
 
