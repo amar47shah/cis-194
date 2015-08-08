@@ -96,7 +96,7 @@ testBadTsAndVictimsHaveEqualSize = do
 getFlow :: [Transaction] -> Map String Integer
 getFlow = foldr recordT Map.empty
   where recordT (Transaction { from = f, to = t, amount = a }) m =
-          amend t a $ amend f (0 - a) m
+          amend t a $ amend f (negate a) m
         amend member flow m' =
           case Map.lookup member m' of
             Just current -> Map.insert member (flow + current) m'
@@ -124,11 +124,11 @@ criminal = getCriminal <$> damage
 
 payers :: Map String Integer -> [String]
 payers m = (sortBy descendingGain) . Map.keys . Map.filter (> 0) $ m
-  where descendingGain p q = compare (0 - m Map.! p) (0 - m Map.! q)
+  where descendingGain p q = negate (m Map.! p) `compare` negate (m Map.! q)
 
 payees :: Map String Integer -> [String]
 payees m = (sortBy ascendingLoss) . Map.keys . Map.filter (< 0) $ m
-  where ascendingLoss p q = compare (m Map.! p) (m Map.! q)
+  where ascendingLoss p q = (m Map.! p) `compare` (m Map.! q)
 
 undoTs :: Map String Integer -> [TId] -> [Transaction]
 undoTs = undefined
