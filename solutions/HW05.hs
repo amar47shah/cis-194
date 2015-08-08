@@ -5,6 +5,7 @@ module HW05 where
 import Data.Bits (xor)
 import Data.ByteString.Lazy (ByteString)
 import Data.Functor ((<$>))
+import Data.List (sortBy)
 import Data.Map.Strict (Map)
 import Data.Maybe (fromJust)
 import GHC.Word (Word8)
@@ -120,6 +121,14 @@ criminal :: IO String
 criminal = getCriminal <$> damage
 
 -- Exercise 7 -----------------------------------------
+
+payers :: Map String Integer -> [String]
+payers m = (sortBy descendingGain) . Map.keys . Map.filter (> 0) $ m
+  where descendingGain p q = compare (0 - m Map.! p) (0 - m Map.! q)
+
+payees :: Map String Integer -> [String]
+payees m = (sortBy ascendingLoss) . Map.keys . Map.filter (< 0) $ m
+  where ascendingLoss p q = compare (m Map.! p) (m Map.! q)
 
 undoTs :: Map String Integer -> [TId] -> [Transaction]
 undoTs = undefined
