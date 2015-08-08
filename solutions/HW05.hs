@@ -6,6 +6,7 @@ import Data.Bits (xor)
 import Data.ByteString.Lazy (ByteString)
 import Data.Functor ((<$>))
 import Data.Map.Strict (Map)
+import Data.Maybe (fromJust)
 import GHC.Word (Word8)
 import System.Environment (getArgs)
 
@@ -92,7 +93,20 @@ testBadTsAndVictimsHaveEqualSize = do
 -- Exercise 5 -----------------------------------------
 
 getFlow :: [Transaction] -> Map String Integer
-getFlow = undefined
+getFlow = foldr recordT Map.empty
+  where recordT (Transaction { from = f, to = t, amount = a }) m =
+          amend t a $ amend f (0 - a) m
+        amend member flow m' =
+          case Map.lookup member m' of
+            Just current -> Map.insert member (flow + current) m'
+            Nothing      -> Map.insert member  flow            m'
+
+damage :: IO (Map String Integer)
+damage = getFlow <$> fromJust <$> badTs
+
+damage' :: IO (Map String Integer)
+damage' = do Just ts <- badTs
+             return $ getFlow ts
 
 -- Exercise 6 -----------------------------------------
 
