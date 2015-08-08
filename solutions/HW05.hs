@@ -7,7 +7,7 @@ import Data.ByteString.Lazy (ByteString)
 import Data.Functor ((<$>))
 import Data.List (sortBy)
 import Data.Map.Strict (Map)
-import Data.Maybe (fromJust, listToMaybe)
+import Data.Maybe (fromJust)
 import GHC.Word (Word8)
 import System.Environment (getArgs)
 
@@ -130,25 +130,21 @@ payees :: Map String Integer -> [String]
 payees m = (sortBy ascendingLoss) . Map.keys . Map.filter (< 0) $ m
   where ascendingLoss p q = (m Map.! p) `compare` (m Map.! q)
 
-repay :: Map String Integer -> String -> String -> TId ->
-         (Transaction, Map String Integer)
-repay m payer payee t =
-  let (canPay, isOwed) = (m Map.! payer, negate $ m Map.! payee)
-   in let payback = min canPay isOwed
-          m' = Map.adjust (subtract payback) payer $
-               Map.adjust        (+ payback) payee m
-       in (Transaction { from=payer, to=payee, amount=payback, tid=t }, m')
-
 undoTs :: Map String Integer -> [TId] -> [Transaction]
 undoTs m tids =
-  case (maybePayer, maybePayee, maybeTid) of
-    (Just payer, Just payee, Just tid) ->
-      [transaction] ++ undoTs adjustedMap (tail tids)
-      where (transaction, adjustedMap) = repay m payer payee tid
-    _ -> []
-  where maybePayer = listToMaybe $ payers m
-        maybePayee = listToMaybe $ payees m
-        maybeTid   = listToMaybe tids
+  if any null [payers m, payees m, tids]
+  then []
+  else (transaction :) . undoTs adjustedMap $ ts where
+       (transaction, adjustedMap) = repay m payer payee t
+       payer : _  = payers m
+       payee : _  = payees m
+       t     : ts = tids
+       repay m' pr pe tid =
+             (Transaction { from=pr, to=pe, amount=toPay, tid=tid }, m'') where
+             m'' = Map.adjust (subtract toPay) pr . Map.adjust (+ toPay) pe $ m'
+             toPay  = min canPay isOwed
+             canPay =          m' Map.! pr
+             isOwed = negate $ m' Map.! pe
 
 -- Exercise 8 -----------------------------------------
 
