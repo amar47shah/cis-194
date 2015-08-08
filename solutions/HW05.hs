@@ -72,7 +72,22 @@ victims = parseFile "../resources/clues/victims.json"
 -- Exercise 4 -----------------------------------------
 
 getBadTs :: FilePath -> FilePath -> IO (Maybe [Transaction])
-getBadTs = undefined
+getBadTs badIdsPath transactionsPath = do
+  maybeIds <- parseFile badIdsPath       :: IO (Maybe [TId])
+  maybeTs  <- parseFile transactionsPath :: IO (Maybe [Transaction])
+  case (maybeIds, maybeTs) of
+       (Just ids, Just ts) -> return . Just $ filter ((`elem` ids) . tid) ts
+       _                   -> return Nothing
+
+badTs :: IO (Maybe [Transaction])
+badTs = getBadTs "../resources/clues/victims.json"
+                 "../resources/clues/transactions.json"
+
+testBadTsAndVictimsHaveEqualSize :: IO (Bool)
+testBadTsAndVictimsHaveEqualSize = do
+  Just ts <- badTs
+  Just vs <- victims
+  return $ length ts == length vs
 
 -- Exercise 5 -----------------------------------------
 
