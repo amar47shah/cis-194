@@ -25,11 +25,11 @@ data Stream a = Cons a (Stream a)
 
 -- Show instance prints the first 20 elements followed by ellipsis
 instance Show a => Show (Stream a) where
-    show s = "[" ++ intercalate ", " (map show $ take 10 $ streamToList s)
+    show s = "[" ++ intercalate ", " (map show $ take 20 $ streamToList s)
              ++ ",..."
 
 streamToList :: Stream a -> [a]
-streamToList = undefined
+streamToList (Cons x xs) = x : streamToList xs
 
 -- Exercise 4 -----------------------------------------
 
