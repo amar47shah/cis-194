@@ -149,7 +149,7 @@ undoTs m tids =
 -- Exercise 8 -----------------------------------------
 
 writeJSON :: ToJSON a => FilePath -> a -> IO ()
-writeJSON = undefined
+writeJSON outPath = BS.writeFile outPath . encode
 
 -- Exercise 9 -----------------------------------------
 
@@ -177,11 +177,11 @@ main = do
     case args of
       dog1:dog2:trans:vict:ids:out:_ ->
           doEverything dog1 dog2 trans vict ids out
-      _ -> doEverything "dog-original.jpg"
-                        "dog.jpg"
-                        "transactions.json"
-                        "victims.json"
-                        "new-ids.json"
-                        "new-transactions.json"
+      _ -> doEverything "../resources/clues/dog-original.jpg"
+                        "../resources/clues/dog.jpg"
+                        "../resources/clues/transactions.json"
+                        "../resources/clues/victims.json"
+                        "../resources/clues/new-ids.json"
+                        "../resources/clues/new-transactions.json"
   putStrLn crim
 
