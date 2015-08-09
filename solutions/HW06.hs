@@ -34,7 +34,7 @@ streamToList (Cons x xs) = x : streamToList xs
 -- Exercise 4 -----------------------------------------
 
 instance Functor Stream where
-    fmap = undefined
+    fmap f (Cons x xs) = Cons (f x) (fmap f xs)
 
 -- Exercise 5 -----------------------------------------
 
