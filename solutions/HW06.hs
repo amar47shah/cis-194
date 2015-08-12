@@ -55,10 +55,10 @@ sTake     = (. streamToList) . take
 -- Exercise 6 -----------------------------------------
 
 nats :: Stream Integer
-nats = undefined
+nats = sIterate succ 0
 
 ruler :: Stream Integer
-ruler = undefined
+ruler = sInterleave (sRepeat 0) . (succ <$>) $ ruler
 
 -- Exercise 7 -----------------------------------------
 
