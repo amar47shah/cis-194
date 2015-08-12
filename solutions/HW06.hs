@@ -81,7 +81,7 @@ rand s = Cons g $ rand g
 
 -- Exercise 8 -----------------------------------------
 
-{- Total Memory in use: ??? MB -}
+{- Total Memory in use: 223 MB -}
 minMaxSlow :: [Int] -> Maybe (Int, Int)
 minMaxSlow [] = Nothing   -- no min or max if there are no elements
 minMaxSlow xs = Just (minimum xs, maximum xs)
