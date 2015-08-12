@@ -60,6 +60,18 @@ nats = sIterate succ 0
 ruler :: Stream Integer
 ruler = sInterleave (sRepeat 0) . (succ <$>) $ ruler
 
+-- Verify that the pattern works for 2^17 = 131072 terms
+testRuler :: Bool
+testRuler =
+      -- each x in [0..n] first occurs at index 2^x - 1
+      map (`elemIndex` sTake (2^n) ruler) [0..n] ==
+      map (\x -> Just (2^x-1)) [0..n]
+    &&
+      -- each x in [0..n-1] appears (n-x-1) times in the first 2^n - 1 terms
+      map (\x -> length . filter (== x) $ sTake (2^n-1) ruler) [0..n-1] ==
+      reverse (map (2^) [0..n-1])
+    where n = 17 -- larger than 17 is too slow
+
 -- Exercise 7 -----------------------------------------
 
 -- | Implementation of C rand
