@@ -39,16 +39,18 @@ instance Functor Stream where
 -- Exercise 5 -----------------------------------------
 
 sRepeat :: a -> Stream a
-sRepeat = undefined
+sRepeat x = Cons x $ sRepeat x
 
 sIterate :: (a -> a) -> a -> Stream a
-sIterate = undefined
+sIterate f x = Cons x . sIterate f $ f x
 
 sInterleave :: Stream a -> Stream a -> Stream a
-sInterleave (Cons _ _) _ = undefined
+sInterleave (Cons h t) s = Cons h $ sInterleave s t
 
 sTake :: Int -> Stream a -> [a]
-sTake = undefined
+sTake     = (. streamToList) . take
+   -- n   = take n . streamToList
+   -- n s = take n (streamToList s)
 
 -- Exercise 6 -----------------------------------------
 
