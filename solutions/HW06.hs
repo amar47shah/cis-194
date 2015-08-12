@@ -76,7 +76,8 @@ testRuler =
 
 -- | Implementation of C rand
 rand :: Int -> Stream Int
-rand = undefined
+rand s = Cons g $ rand g
+  where g = (1103515245 * s + 12345) `mod` 2147483648
 
 -- Exercise 8 -----------------------------------------
 
