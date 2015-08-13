@@ -108,5 +108,33 @@ main = print $ minMax $ sTake 1000000 $ rand 7666532
 
 -- Exercise 10 ----------------------------------------
 
+-- 2x2 matrix
+data Matrix = Matrix { topLeft     :: Integer
+                     , topRight    :: Integer
+                     , bottomLeft  :: Integer
+                     , bottomRight :: Integer
+                     }
+
+instance Show Matrix where
+  show m = "|" ++ show (topLeft m) ++ " " ++ show (topRight m) ++ "|"
+           ++ "\n" ++
+           "|" ++ show (bottomLeft m) ++ " " ++ show (bottomRight m) ++ "|"
+
+instance Num Matrix where
+  (*) = times
+  (+) = undefined
+  negate = undefined
+  fromInteger = undefined
+  abs = undefined
+  signum = undefined
+
+times :: Matrix -> Matrix -> Matrix
+(Matrix a b c d) `times` (Matrix w x y z) = Matrix (a*w + b*y) (a*x + b*z)
+                                                   (c*w + d*y) (c*x + d*z)
+
 fastFib :: Int -> Integer
-fastFib = undefined
+fastFib 0 = 0
+fastFib n = topRight $ (Matrix 1 1 1 0) ^ n
+
+fibs :: [Integer]
+fibs = map fastFib [0..]
