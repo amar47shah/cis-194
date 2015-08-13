@@ -96,6 +96,13 @@ minMax = go Nothing where
     Nothing       -> go (Just (x, x)) xs
     Just (mn, mx) -> go (mn `seq` mx `seq` Just (min mn x, max mx x)) xs
 
+-- Using foldl', ditch the acc
+{- Total Memory in use: 1 MB -}
+minMax' :: [Int] -> Maybe (Int, Int)
+minMax' = foldl' go Nothing
+  where go Nothing         x = Just (x, x)
+        go (Just (mn, mx)) x = mn `seq` mx `seq` Just (min mn x, max mx x)
+
 main :: IO ()
 main = print $ minMax $ sTake 1000000 $ rand 7666532
 
