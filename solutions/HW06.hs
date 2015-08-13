@@ -88,12 +88,16 @@ minMaxSlow xs = Just (minimum xs, maximum xs)
 
 -- Exercise 9 -----------------------------------------
 
-{- Total Memory in use: ??? MB -}
+{- Total Memory in use: 1 MB -}
 minMax :: [Int] -> Maybe (Int, Int)
-minMax = undefined
+minMax = go Nothing where
+  go acc []     = acc
+  go acc (x:xs) = case acc of
+    Nothing       -> go (Just (x, x)) xs
+    Just (mn, mx) -> go (mn `seq` mx `seq` Just (min mn x, max mx x)) xs
 
 main :: IO ()
-main = print $ minMaxSlow $ sTake 1000000 $ rand 7666532
+main = print $ minMax $ sTake 1000000 $ rand 7666532
 
 -- Exercise 10 ----------------------------------------
 
