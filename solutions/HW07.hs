@@ -18,7 +18,18 @@ import qualified Data.Vector as V
 -- Exercise 1 -----------------------------------------
 
 liftM :: Monad m => (a -> b) -> m a -> m b
-liftM = undefined
+liftM f mx = return . f =<< mx
+
+--alternative definitions
+--of course, liftM == fmap == <$>
+liftM', liftM'', liftM''' :: Monad m => (a -> b) -> m a -> m b
+liftM' f mx = mx >>= return . f
+
+liftM'' = (=<<) . (return .) --pointfree, derived from first liftM
+
+liftM''' f mx = do
+  x <- mx
+  return $ f x
 
 swapV :: Int -> Int -> Vector a -> Maybe (Vector a)
 swapV = undefined
