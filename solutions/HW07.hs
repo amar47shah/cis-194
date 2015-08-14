@@ -138,7 +138,7 @@ repl s@State{..} | money <= 0  = putStrLn "You ran out of money!"
                   _ | c13 > c23 -> repl $ State (m + amt) d'
                     | c13 < c23 -> repl $ State (m - amt) d'
                     | otherwise -> war (State m d') amt
-              _ -> deckEmpty 
+              _ -> deckEmpty
 
 main :: IO ()
 main = evalRandIO newDeck >>= repl . State 100
