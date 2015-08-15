@@ -133,8 +133,9 @@ times :: Matrix -> Matrix -> Matrix
                                                    (c*w + d*y) (c*x + d*z)
 
 fastFib :: Int -> Integer
-fastFib 0 = 0
-fastFib n = topRight $ (Matrix 1 1 1 0) ^ n
+fastFib n | n < 0 = 0
+fastFib 0         = 1
+fastFib n         = topLeft $ (Matrix 1 1 1 0) ^ n
 
 fibs :: [Integer]
 fibs = map fastFib [0..]
