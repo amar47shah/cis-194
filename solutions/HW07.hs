@@ -32,7 +32,8 @@ liftM''' f mx = do
   return $ f x
 
 swapV :: Int -> Int -> Vector a -> Maybe (Vector a)
-swapV = undefined
+swapV i j v = liftM2 sub (v !? i) (v !? j)
+  where sub x y = v // [(i, y), (j, x)]
 
 -- Exercise 2 -----------------------------------------
 
