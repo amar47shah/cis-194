@@ -38,10 +38,10 @@ swapV i j v = liftM2 sub (v !? i) (v !? j)
 -- Exercise 2 -----------------------------------------
 
 mapM :: Monad m => (a -> m b) -> [a] -> m [b]
-mapM = undefined
+mapM = (sequence .) . map
 
 getElts :: [Int] -> Vector a -> Maybe [a]
-getElts = undefined
+getElts is v = (v !?) `mapM` is
 
 -- Exercise 3 -----------------------------------------
 
