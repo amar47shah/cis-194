@@ -53,10 +53,10 @@ randomElt v = (v !?) <$> getRandomR (0, pred $ V.length v)
 -- Exercise 4 -----------------------------------------
 
 randomVec :: Random a => Int -> Rnd (Vector a)
-randomVec = undefined
+randomVec n = V.fromList <$> replicateM n getRandom
 
 randomVecR :: Random a => Int -> (a, a) -> Rnd (Vector a)
-randomVecR = undefined
+randomVecR n = (V.fromList <$>) . replicateM n . getRandomR
 
 -- Exercise 5 -----------------------------------------
 
