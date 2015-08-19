@@ -48,7 +48,7 @@ getElts is v = (v !?) `mapM` is
 type Rnd a = Rand StdGen a
 
 randomElt :: Vector a -> Rnd (Maybe a)
-randomElt = undefined
+randomElt v = (v !?) <$> getRandomR (0, pred $ V.length v)
 
 -- Exercise 4 -----------------------------------------
 
