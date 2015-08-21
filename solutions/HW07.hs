@@ -63,11 +63,11 @@ randomVecR n = (V.fromList <$>) . replicateM n . getRandomR
 shuffle :: Vector a -> Rnd (Vector a)
 shuffle = undefined
 
-randomSwapFirst :: Vector a -> IO (Vector a)
+randomSwapFirst :: Vector a -> Rnd (Vector a)
 randomSwapFirst v = do
   let n = V.length v
   let i = 0
-  j <- evalRandIO $ getRandomR (0, pred n)
+  j <- getRandomR (0, pred n)
   return $ v // [(i, v ! j), (j, v ! i)]
 
 -- Exercise 6 -----------------------------------------
