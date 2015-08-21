@@ -64,11 +64,11 @@ shuffle :: Vector a -> Rnd (Vector a)
 shuffle = undefined
 
 randomSwapFirst :: Vector a -> Rnd (Vector a)
-randomSwapFirst v = do
-  let n = V.length v
-  let i = 0
-  j <- getRandomR (0, pred n)
-  return $ v // [(i, v ! j), (j, v ! i)]
+randomSwapFirst v
+ | V.length v < 2 = return v
+ | otherwise      = do
+       j <- getRandomR (1, pred $ V.length v)
+       return $ v // [(0, v ! j), (j, v ! 0)]
 
 -- Exercise 6 -----------------------------------------
 
