@@ -108,7 +108,14 @@ qsort v
 -- Exercise 8 -----------------------------------------
 
 qsortR :: Ord a => Vector a -> Rnd (Vector a)
-qsortR = undefined
+qsortR v
+ | V.null v  = return v
+ | otherwise = do
+   i <- getRandomR (0, pred $ V.length v)
+   let (smaller, x, larger) = partitionAt v i
+   sortedLeft  <- qsortR smaller
+   sortedRight <- qsortR larger
+   return $ sortedLeft <> (x `cons` sortedRight)
 
 -- Exercise 9 -----------------------------------------
 
