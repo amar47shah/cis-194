@@ -82,8 +82,14 @@ randomSwapFirst v
 
 -- Exercise 6 -----------------------------------------
 
+-- Unsafe, i must be in range [0..pred $ V.length v]
 partitionAt :: Ord a => Vector a -> Int -> (Vector a, a, Vector a)
-partitionAt = undefined
+partitionAt v i = (V.filter (< x) remaining, x, V.filter (>= x) remaining)
+  where x = v ! i
+        remaining = removeAt v i
+
+removeAt :: Vector a -> Int -> Vector a
+removeAt v i = V.take i v V.++ (V.drop . succ) i v
 
 -- Exercise 7 -----------------------------------------
 
