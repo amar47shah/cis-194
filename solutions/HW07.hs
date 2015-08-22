@@ -102,9 +102,8 @@ quicksort (x:xs) = quicksort [ y | y <- xs, y < x ]
 qsort :: Ord a => Vector a -> Vector a
 qsort v
  | V.null v  = v
- | otherwise = qsort [ y | y <- xs, y < x ]
-               <> (x `cons` qsort [y | y <- xs, y >= x])
-   where (x, xs) = (V.head v, V.tail v)
+ | otherwise = qsort smaller <> (x `cons` qsort larger)
+   where (smaller, x, larger) = partitionAt v 0
 
 -- Exercise 8 -----------------------------------------
 
