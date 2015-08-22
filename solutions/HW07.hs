@@ -62,12 +62,12 @@ randomVecR n = (V.fromList <$>) . replicateM n . getRandomR
 
 shuffle :: Vector a -> Rnd (Vector a)
 shuffle v = foldM randomSwap v $ reverse [1..pred $ V.length v]
-  where randomSwap v i = getRandomR (0, i) >>= swap v i
-        swap v i j = return $ v // [(i, v ! j), (j, v ! i)]
+  where randomSwap w i = getRandomR (0, i) >>= swap w i
+        swap w i j = return $ w // [(i, w ! j), (j, w ! i)]
 
 -- only swaps *from* indexes lower than i
-randomSwapAt :: Vector a -> Int -> Rnd (Vector a)
-randomSwapAt v i
+randomSwap' :: Vector a -> Int -> Rnd (Vector a)
+randomSwap' v i
  | i < 0 || i >= V.length v = return v
  | otherwise              = do
        j <- getRandomR (0, i)
