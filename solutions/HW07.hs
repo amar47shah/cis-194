@@ -100,7 +100,11 @@ quicksort (x:xs) = quicksort [ y | y <- xs, y < x ]
                    <> (x : quicksort [ y | y <- xs, y >= x ])
 
 qsort :: Ord a => Vector a -> Vector a
-qsort = undefined
+qsort v
+ | V.null v  = v
+ | otherwise = qsort [ y | y <- xs, y < x ]
+               <> V.cons x (qsort [y | y <- xs, y >= x])
+   where (x, xs) = (V.head v, V.tail v)
 
 -- Exercise 8 -----------------------------------------
 
