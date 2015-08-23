@@ -10,7 +10,6 @@ import Control.Monad.Random
 import Data.Functor
 import Data.Monoid
 import Data.Vector (Vector, cons, (!), (!?), (//))
-import System.Random
 
 import qualified Data.Vector as V
 
