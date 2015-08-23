@@ -147,7 +147,9 @@ newDeck = shuffle allCards
 -- Exercise 11 ----------------------------------------
 
 nextCard :: Deck -> Maybe (Card, Deck)
-nextCard = undefined
+nextCard d
+ | V.null d  = Nothing
+ | otherwise = Just (V.head d, V.tail d)
 
 -- Exercise 12 ----------------------------------------
 
