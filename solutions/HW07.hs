@@ -121,7 +121,20 @@ qsortR v
 
 -- Selection
 select :: Ord a => Int -> Vector a -> Rnd (Maybe a)
-select = undefined
+select i v = do
+  if i `elem` [0..pred $ V.length v]
+     then do
+       (l, p, r) <- partitionR v
+       if i < V.length l
+          then select i l
+          else if i == V.length l
+               then return $ Just p
+               else select (i - 1 - V.length l) r
+     else return Nothing
+
+
+partitionR :: Ord a => Vector a -> Rnd (Vector a, a, Vector a)
+partitionR v = partitionAt v <$> getRandomR (0, pred $ V.length v)
 
 -- Exercise 10 ----------------------------------------
 
