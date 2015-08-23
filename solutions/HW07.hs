@@ -154,7 +154,13 @@ nextCard d
 -- Exercise 12 ----------------------------------------
 
 getCards :: Int -> Deck -> Maybe ([Card], Deck)
-getCards = undefined
+getCards n d
+ | 0 > n || n > V.length d = Nothing
+ | 0 == n = Just ([], d)
+ | otherwise = do
+   (c , d' ) <- nextCard d
+   (cs, d'') <- getCards (pred n) d'
+   Just (c:cs, d'')
 
 -- Exercise 13 ----------------------------------------
 
