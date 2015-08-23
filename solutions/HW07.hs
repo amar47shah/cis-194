@@ -139,10 +139,10 @@ partitionR v = partitionAt v <$> getRandomR (0, pred $ V.length v)
 -- Exercise 10 ----------------------------------------
 
 allCards :: Deck
-allCards = undefined
+allCards = [ Card l s | l <- labels, s <- suits ]
 
 newDeck :: Rnd Deck
-newDeck =  undefined
+newDeck = shuffle allCards
 
 -- Exercise 11 ----------------------------------------
 
