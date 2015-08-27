@@ -77,7 +77,10 @@ material_implication = Conj dir1 dir2
 -- Exercise 1 -----------------------------------------
 
 disjunctive_syllogism :: (p \/ q) -> Not p -> q
-disjunctive_syllogism = admit
+disjunctive_syllogism p_or_q not_p =
+  case p_or_q of
+    Left  p -> absurd $ not_p p
+    Right q -> q
 
 -- Exercise 2 -----------------------------------------
 
