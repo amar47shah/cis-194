@@ -53,7 +53,7 @@ material_implication :: (p -> q) <-> (Not p \/ q)
 -- The proof has two parts, the forward direction (->) and
 --   the backwards direction (<-)
 material_implication = Conj dir1 dir2
-    where 
+    where
       -- Case 1: (P -> Q) -> (~P \/ Q)
       dir1 p_imp_q =
           -- There are 2 cases, P and ~P
@@ -160,7 +160,7 @@ n_plus_0 :: Forall n -> n + O == n
 n_plus_0  Zero    = Refl {- :: O + O == O -}
 -- Inductive Step:
 n_plus_0 (Succ n) = case n_plus_0 n of
-                      Refl   {- :: n   + O == n   -} -> 
+                      Refl   {- :: n   + O == n   -} ->
                         Refl {- :: S n + O == S n -}
 
 add_zero :: Forall n -> O + n == n + O
