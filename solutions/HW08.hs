@@ -85,7 +85,10 @@ disjunctive_syllogism p_or_q not_p =
 -- Exercise 2 -----------------------------------------
 
 composition :: (p -> q) \/ (p -> r) -> p -> q \/ r
-composition = admit
+composition pQ_or_pR p =
+  case pQ_or_pR of
+    Left  p_implies_q -> Left  $ p_implies_q p
+    Right p_implies_r -> Right $ p_implies_r p
 
 -- Exercise 3 -----------------------------------------
 
