@@ -110,13 +110,23 @@ transposition' = Conj f b
   where f = modus_tollens
         b not_q_not_p p =
           case excluded_middle of
-            Left  q     -> q
+            Left      q -> q
             Right not_q -> absurd $ not_q_not_p not_q p
 
 -- Exercise 4 -----------------------------------------
 
 de_morgan :: Not (p \/ q) <-> (Not p /\ Not q)
-de_morgan = admit
+de_morgan = Conj f b
+  where f not_pORq =
+          case excluded_middle of
+            Left      p -> absurd . not_pORq $ Left p
+            Right not_p -> case excluded_middle of
+                             Left      q -> absurd . not_pORq $ Right q
+                             Right not_q -> Conj not_p not_q
+        b (Conj not_p not_q) =
+          case excluded_middle of
+            Left      pORq -> absurd . not_q $ disjunctive_syllogism pORq not_p
+            Right not_pORq -> not_pORq
 
 -- Natural Numbers ------------------------------------
 
