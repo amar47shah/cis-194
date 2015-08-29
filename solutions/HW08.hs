@@ -74,6 +74,12 @@ material_implication = Conj dir1 dir2
           -- therefore we can just return it
           q
 
+forward :: p <-> q -> p -> q
+forward  (Conj p_q _) = p_q
+
+backward :: p <-> q -> q -> p
+backward (Conj _ q_p) = q_p
+
 -- Exercise 1 -----------------------------------------
 
 disjunctive_syllogism :: (p \/ q) -> Not p -> q
@@ -93,7 +99,19 @@ composition pQ_or_pR p =
 -- Exercise 3 -----------------------------------------
 
 transposition :: (p -> q) <-> (Not q -> Not p)
-transposition = admit
+transposition = Conj f b
+  where f             = modus_tollens
+        b not_q_not_p = backward double_negation
+                      . modus_tollens not_q_not_p
+                      . forward double_negation
+
+transposition' :: (p -> q) <-> (Not q -> Not p)
+transposition' = Conj f b
+  where f = modus_tollens
+        b not_q_not_p p =
+          case excluded_middle of
+            Left  q     -> q
+            Right not_q -> absurd $ not_q_not_p not_q p
 
 -- Exercise 4 -----------------------------------------
 
