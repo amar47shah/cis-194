@@ -198,7 +198,8 @@ n_plus_0 (Succ n) = case n_plus_0 n of
                         Refl {- :: S n + O == S n -}
 
 add_zero :: Forall n -> O + n == n + O
-add_zero = admit
+add_zero  Zero    = Refl
+add_zero (Succ n) = case add_zero n of Refl -> Refl
 
 -- Exercise 6 -----------------------------------------
 
