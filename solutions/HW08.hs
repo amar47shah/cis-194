@@ -224,7 +224,8 @@ even_plus_one  E_Zero   = O_One
 even_plus_one (E_Rec n) = O_Rec $ even_plus_one n
 
 odd_plus_one :: Odd n -> Even (S n)
-odd_plus_one = admit
+odd_plus_one  O_One    = E_Rec E_Zero
+odd_plus_one (O_Rec n) = E_Rec $ odd_plus_one n
 
 -- Exercise 8 -----------------------------------------
 
