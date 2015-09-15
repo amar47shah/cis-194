@@ -1,3 +1,6 @@
+--
+-- See 2015-noamz/solutions/HW01.hs for solutions to similar problems.
+--
 module HW01 (toDigits, toDigitsRev) where
 
 --not tail-recursive
