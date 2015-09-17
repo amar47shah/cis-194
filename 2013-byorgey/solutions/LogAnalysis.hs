@@ -10,7 +10,10 @@ parseMessage :: String -> LogMessage
 parseMessage = parseMessageWords . words
 
 parseMessageWords :: [String] -> LogMessage
-parseMessageWords ("I"  :t:m@(_:_)) = LogMessage  Info            (read t) $ unwords m
-parseMessageWords ("E":l:t:m@(_:_)) = LogMessage (Error $ read l) (read t) $ unwords m
-parseMessageWords ("W"  :t:m@(_:_)) = LogMessage  Warning         (read t) $ unwords m
-parseMessageWords ws                = Unknown $ unwords ws
+parseMessageWords ("I"  :t:ws@(_:_)) = logMessageFrom  Info            t ws
+parseMessageWords ("E":l:t:ws@(_:_)) = logMessageFrom (Error $ read l) t ws
+parseMessageWords ("W"  :t:ws@(_:_)) = logMessageFrom  Warning         t ws
+parseMessageWords ws                 = Unknown $ unwords ws
+
+logMessageFrom :: MessageType -> String -> [String] -> LogMessage
+logMessageFrom msgType time ws = LogMessage msgType (read time) $ unwords ws
