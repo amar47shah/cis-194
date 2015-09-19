@@ -1,5 +1,5 @@
 {-# OPTIONS_GHC -Wall #-}
-module LogAnalysis (parse, parseMessage) where
+module LogAnalysis (insert, parse, parseMessage) where
 
 import Log
 
@@ -17,3 +17,11 @@ parseMessageWords ws                 = Unknown $ unwords ws
 
 logMessageFrom :: MessageType -> String -> [String] -> LogMessage
 logMessageFrom msgType time ws = LogMessage msgType (read time) $ unwords ws
+
+insert :: LogMessage -> MessageTree -> MessageTree
+insert (Unknown _) tree = tree
+insert m Leaf = Node Leaf m Leaf
+insert m@(LogMessage _ t _) (Node l m'@(LogMessage _ t' _) r)
+  | t < t'    = Node (insert m l) m'  r
+  | otherwise = Node  l           m' (insert m r)
+insert _ _ = error "MessageTree contains Unknown LogMessage!"
