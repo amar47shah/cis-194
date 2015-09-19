@@ -1,5 +1,11 @@
 {-# OPTIONS_GHC -Wall #-}
-module LogAnalysis (build, inOrder, insert, parse, parseMessage) where
+module LogAnalysis ( build
+                   , inOrder
+                   , insert
+                   , parse
+                   , parseMessage
+                   , whatWentWrong
+                   ) where
 
 import Log
 
@@ -32,3 +38,10 @@ build = foldr insert Leaf
 inOrder :: MessageTree -> [LogMessage]
 inOrder (Node l m r) = inOrder l ++ m : inOrder r
 inOrder  Leaf        = []
+
+whatWentWrong :: [LogMessage] -> [String]
+whatWentWrong = map message . inOrder . build . filter isImportant
+  where message (LogMessage _ _ m) = m
+        message _                  = ""
+        isImportant (LogMessage (Error n) _ _) = n >= 50
+        isImportant _                          = False
