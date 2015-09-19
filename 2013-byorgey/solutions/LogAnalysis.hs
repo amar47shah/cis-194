@@ -1,5 +1,5 @@
 {-# OPTIONS_GHC -Wall #-}
-module LogAnalysis (insert, parse, parseMessage) where
+module LogAnalysis (build, insert, parse, parseMessage) where
 
 import Log
 
@@ -25,3 +25,6 @@ insert m@(LogMessage _ t _) (Node l m'@(LogMessage _ t' _) r)
   | t < t'    = Node (insert m l) m'  r
   | otherwise = Node  l           m' (insert m r)
 insert _ _ = error "MessageTree contains Unknown LogMessage!"
+
+build :: [LogMessage] -> MessageTree
+build = foldr insert Leaf
