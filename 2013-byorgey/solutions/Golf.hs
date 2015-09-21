@@ -19,3 +19,14 @@ skips :: [a] -> [[a]]
 --
 -- Using init, 16 chars:
 skips = init . tails
+
+localMaxima :: [Integer] -> [Integer]
+-- Map (take 3) over tails to get sliding windows, and take length l - 2
+-- to ensure all windows have length 3.
+-- Filter to get windows with local maxima, and map to isolate maxima.
+-- 90 chars:
+localMaxima l = map (\[_,y,_] -> y) .
+                  filter (\[x,y,z] -> x < y && y > z) .
+                    take (length l - 2) .
+                      map (take 3) $
+                        tails l
