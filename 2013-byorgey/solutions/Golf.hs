@@ -21,12 +21,13 @@ skips :: [a] -> [[a]]
 skips = init . tails
 
 localMaxima :: [Integer] -> [Integer]
--- Map (take 3) over tails to get sliding windows, and take length l - 2
--- to ensure all windows have length 3.
--- Filter to get windows with local maxima, and map to isolate maxima.
--- 90 chars:
-localMaxima l = map (\[_,y,_] -> y) .
-                  filter (\[x,y,z] -> x < y && y > z) .
-                    take (length l - 2) .
-                      map (take 3) $
-                        tails l
+-- Map (take 3) over tails to get sliding windows
+-- Filter to ensure all windows have length 3.
+-- Filter to get windows with local maxima
+-- Map to isolate maxima.
+-- 93 chars:
+localMaxima = map (\[_,y,_] -> y) .
+                filter (\[x,y,z] -> x < y && y > z) .
+                  filter ((== 3) . length) .
+                    map (take 3) .
+                      tails
