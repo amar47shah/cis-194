@@ -6,3 +6,5 @@ module Golf (skips) where
 -- can safely do the same. 33 chars.
 skips :: [a] -> [[a]]
 skips = filter (not . null) . scanr (:) []
+-- with init instead: 21 chars.
+-- skips = init . scanr (:) []
