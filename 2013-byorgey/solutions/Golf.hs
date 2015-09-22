@@ -1,4 +1,4 @@
-module Golf (skips) where
+module Golf (histogram, localMaxima, skips) where
 
 import Data.List (tails)
 
@@ -31,3 +31,19 @@ localMaxima = map (\[_,y,_] -> y) .
                   filter ((== 3) . length) .
                     map (take 3) .
                       tails
+
+histogram :: [Int] -> String
+histogram ns = h $ counts ns
+  where
+    h cs =
+      case (maximum cs) of
+        0 -> "==========\n0123456789\n"
+        m -> map (\c -> if c == m then '*' else ' ') cs ++ "\n" ++
+             (h $ map (\c -> if c == m then c - 1 else c) cs)
+
+counts :: [Int] -> [Int]
+counts = foldr (\d cs -> replaceAt d (cs !! d + 1) cs) (replicate 10 0)
+
+replaceAt :: Int -> a -> [a] -> [a]
+replaceAt n y xs = a ++ (y:b)
+  where (a, (_:b)) = splitAt n xs
