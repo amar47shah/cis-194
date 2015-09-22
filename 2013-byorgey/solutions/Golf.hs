@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -Wall #-}
 module Golf (histogram, localMaxima, skips) where
 
 import Data.List (tails)
@@ -32,18 +33,21 @@ localMaxima = map (\[_,y,_] -> y) .
                     map (take 3) .
                       tails
 
-histogram :: [Int] -> String
-histogram ns = h $ counts ns
+histogram :: [Integer] -> String
+histogram xs = helper . counts $ map fromIntegral xs
   where
-    h cs =
+    helper :: [Int] -> String
+    helper cs =
       case (maximum cs) of
         0 -> "==========\n0123456789\n"
-        m -> map (\c -> if c == m then '*' else ' ') cs ++ "\n" ++
-             (h $ map (\c -> if c == m then c - 1 else c) cs)
-
-counts :: [Int] -> [Int]
-counts = foldr (\d cs -> replaceAt d (cs !! d + 1) cs) (replicate 10 0)
+        m -> concat [map (draw m) cs, "\n", helper $ map (sand m) cs]
+               where
+                 draw n c | n == c = '*'   | otherwise = ' '
+                 sand n c | n == c = c - 1 | otherwise = c
+    counts :: [Int] -> [Int]
+    counts = foldr incrementCount $ replicate 10 0
+      where incrementCount d cs = replaceAt d (cs !! d + 1) cs
 
 replaceAt :: Int -> a -> [a] -> [a]
-replaceAt n y xs = a ++ (y:b)
-  where (a, (_:b)) = splitAt n xs
+replaceAt i x xs = first ++ (x:rest)
+  where (first, (_:rest)) = splitAt i xs
