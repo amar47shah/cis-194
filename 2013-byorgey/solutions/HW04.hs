@@ -44,11 +44,11 @@ insert x (Node _ Leaf y Leaf)             = Node 1 (singleton x) y Leaf
 insert x (Node _ l@(Node _ _ _ _) y Leaf) = Node 1 l y (singleton x)
 insert x (Node _ Leaf y r@(Node _ _ _ _)) = Node 1 (singleton x) y r
 insert x (Node h l@(Node hl _ _ _) y r@(Node hr _ _ _))
-  | hl > hr    = Node h                 l  y r'
-  | hl < hr    = Node h                 l' y r
-  | hasSpace l = Node h                 l' y r
-  | hasSpace r = Node h                 l  y r'
-  | otherwise  = Node (max h (hl' + 1)) l' y r
+  | hl > hr    = Node h         l  y r'
+  | hl < hr    = Node h         l' y r
+  | hasSpace l = Node h         l' y r
+  | hasSpace r = Node h         l  y r'
+  | otherwise  = Node (hl' + 1) l' y r
     where l'@(Node hl' _ _ _) = insert x l
           r'                  = insert x r
 
