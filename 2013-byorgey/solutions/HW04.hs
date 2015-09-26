@@ -65,3 +65,15 @@ hasSpace  Leaf                          = False
 hasSpace (Node _ Leaf _ (Node _ _ _ _)) = True
 hasSpace (Node _ (Node _ _ _ _) _ Leaf) = True
 hasSpace (Node _ l _ r)                 = hasSpace l || hasSpace r
+
+--------------------------------------------------------------------------------
+
+-- Exercise 3
+
+xor :: [Bool] -> Bool
+xor = foldr (⊕) False
+
+(⊕) :: Bool -> Bool -> Bool
+True  ⊕ False = True
+False ⊕ True  = True
+_     ⊕ _     = False

@@ -19,6 +19,7 @@ qcProps = testGroup "QuickCheck"
                     forAll (positiveUpTo 275) prop_foldTreeCorrectHeights
   , QC.testProperty "foldTree result is balanced" $
                     forAll (positiveUpTo 275) prop_foldTreeBalanced
+  , QC.testProperty "xor iff True count odd" $ prop_xorTrueCountOdd
   ]
 
 prop_sameFun1 :: [Integer] -> Bool
@@ -31,7 +32,10 @@ prop_foldTreeCorrectHeights :: Integer -> Bool
 prop_foldTreeCorrectHeights n = heightsCorrect $ foldTree [1..n]
 
 prop_foldTreeBalanced :: Integer -> Bool
-prop_foldTreeBalanced n = heightFor n == integerLog2 n
+prop_foldTreeBalanced = same heightFor integerLog2
+
+prop_xorTrueCountOdd :: [Bool] -> Bool
+prop_xorTrueCountOdd = same xor (odd . length . filter id)
 
 same :: Eq b => (a -> b) -> (a -> b) -> a -> Bool
 same f g = uncurry (==) . (f &&& g)
