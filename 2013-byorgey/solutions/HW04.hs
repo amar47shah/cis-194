@@ -30,6 +30,7 @@ fun2 n
 
 -- Exercise 2
 
+-- | Binary tree with memoized heights.
 data Tree a = Leaf
             | Node Integer (Tree a) a (Tree a)
             deriving (Show, Eq)
@@ -38,6 +39,8 @@ data Tree a = Leaf
 foldTree :: [a] -> Tree a
 foldTree = foldr insert Leaf
 
+-- | Inserts into a balanced binary tree,
+-- | retaining balanced property and updating heights.
 insert :: a -> Tree a -> Tree a
 insert x  Leaf                            = singleton x
 insert x (Node _ Leaf y Leaf)             = Node 1 (singleton x) y Leaf
@@ -52,10 +55,11 @@ insert x (Node h l@(Node hl _ _ _) y r@(Node hr _ _ _))
     where l'@(Node hl' _ _ _) = insert x l
           r'                  = insert x r
 
+-- | Generates a binary tree with one element.
 singleton :: a -> Tree a
 singleton x = Node 0 Leaf x Leaf
 
--- | Determine whether a new node can be inserted without increasing height.
+-- | Determines whether a new node can be inserted without increasing height.
 hasSpace :: Tree a -> Bool
 hasSpace  Leaf                          = False
 hasSpace (Node _ Leaf _ (Node _ _ _ _)) = True
