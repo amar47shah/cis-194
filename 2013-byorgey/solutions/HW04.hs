@@ -77,3 +77,9 @@ xor = foldr (⊕) False
 True  ⊕ False = True
 False ⊕ True  = True
 _     ⊕ _     = False
+
+map' :: (a -> b) -> [a] -> [b]
+map' f = foldr (\x ys -> f x : ys) []
+
+myFoldl :: (b -> a -> b) -> b -> [a] -> b
+myFoldl f i = foldr (flip f) i . reverse
