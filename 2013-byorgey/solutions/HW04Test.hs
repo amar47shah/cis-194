@@ -14,7 +14,11 @@ main = defaultMain qcProps
 qcProps :: TestTree
 qcProps = testGroup "QuickCheck"
   [ QC.testProperty "fun1' == fun1" $ prop_sameFun1
-  , QC.testProperty "fun2' == fun2" $ forAll smallPos prop_sameFun2
+  , QC.testProperty "fun2' == fun2" $ forAll (positiveUpTo 1000) prop_sameFun2
+  , QC.testProperty "foldTree result has correct heights" $
+                    forAll (positiveUpTo 275) prop_foldTreeCorrectHeights
+  , QC.testProperty "foldTree result is balanced" $
+                    forAll (positiveUpTo 275) prop_foldTreeBalanced
   ]
 
 prop_sameFun1 :: [Integer] -> Bool
@@ -23,26 +27,38 @@ prop_sameFun1 = same fun1 fun1'
 prop_sameFun2 :: Integer -> Bool
 prop_sameFun2 = same fun2 fun2'
 
+prop_foldTreeCorrectHeights :: Integer -> Bool
+prop_foldTreeCorrectHeights n = heightsCorrect $ foldTree [1..n]
+
+prop_foldTreeBalanced :: Integer -> Bool
+prop_foldTreeBalanced n = heightFor n == integerLog2 n
+
 same :: Eq b => (a -> b) -> (a -> b) -> a -> Bool
 same f g = uncurry (==) . (f &&& g)
 
-smallPos :: Gen Integer
-smallPos = choose (1, 1000)
+heightsCorrect :: Tree a -> Bool
+heightsCorrect Leaf                 = True
+heightsCorrect (Node h Leaf _ Leaf) = h == 0
+heightsCorrect (Node h Leaf _ (Node h' _ _ _)) = h == h' + 1
+heightsCorrect (Node h (Node h' _ _ _) _ Leaf) = h == h' + 1
+heightsCorrect (Node h l@(Node hl _ _ _) _ r@(Node hr _ _ _)) =
+  h == max hl hr + 1 && heightsCorrect l && heightsCorrect r
 
--- TODO: Make these into unit tests!
+integerLog2 :: Integer -> Integer
+integerLog2 = toInteger . length . takeWhile (> 1) . iterate (`div` 2)
+
+heightFor :: Integer -> Integer
+heightFor n = height $ foldTree [1..n]
+  where height (Node h _ _ _) = h
+        height  Leaf          = -1
+
+positiveUpTo :: Integer -> Gen Integer
+positiveUpTo = choose . ((,) 1)
 
 -- Verify that foldTree's results have correct heights, up to 257 elts.
 -- Should return True
 testHeightsCorrect :: Bool
 testHeightsCorrect = all (heightsCorrect . foldTree) $ tails ([1..257] :: [Integer])
-  where
-    heightsCorrect :: Tree a -> Bool
-    heightsCorrect Leaf                 = True
-    heightsCorrect (Node h Leaf _ Leaf) = h == 0
-    heightsCorrect (Node h Leaf _ (Node h' _ _ _)) = h == h' + 1
-    heightsCorrect (Node h (Node h' _ _ _) _ Leaf) = h == h' + 1
-    heightsCorrect (Node h l@(Node hl _ _ _) _ r@(Node hr _ _ _)) =
-      h == max hl hr + 1 && heightsCorrect l && heightsCorrect r
 
 -- Verify that height increases at 2^n elements.
 testBalancedInsert :: Bool
@@ -59,8 +75,3 @@ testBalancedInsert = all (\(n, h) -> heightFor n == h) $
                      , (256,  8), (511,  8)
                      , (512,  9)
                      ]
-  where
-    height (Node h _ _ _) = h
-    height  Leaf          = -1
-    heightFor :: Integer -> Integer
-    heightFor n = height $ foldTree [1..n]
