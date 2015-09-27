@@ -1,6 +1,8 @@
 {-# OPTIONS_GHC -Wall #-}
 module HW04 where
 
+import Data.List ((\\))
+
 --------------------------------------------------------------------------------
 
 -- Exercise 1
@@ -83,3 +85,17 @@ map' f = foldr (\x ys -> f x : ys) []
 
 myFoldl :: (b -> a -> b) -> b -> [a] -> b
 myFoldl f i = foldr (flip f) i . reverse
+
+--------------------------------------------------------------------------------
+
+-- Exercise 4
+
+sieveSundaram :: Integer -> [Integer]
+sieveSundaram n =
+  map ((+1) . (*2)) $ ks \\ (filter (<= n) . map termToRemove $ cartProd ks ks)
+    where
+  ks = [1..n]
+  termToRemove (i, j) = i + j + 2*i*j
+
+cartProd :: [a] -> [b] -> [(a, b)]
+cartProd xs ys = [(x, y) | x <- xs, y <- ys]
