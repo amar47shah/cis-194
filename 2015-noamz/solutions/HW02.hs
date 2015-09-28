@@ -23,11 +23,7 @@ colors = [Red, Green, Blue, Yellow, Orange, Purple]
 
 -- Get the number of exact matches between the actual code and the guess
 exactMatches :: Code -> Code -> Int
-exactMatches ps qs = length . filter (\(a, b) -> a == b) $ zip ps qs
-          -- ps qs = length . filter (uncurry (==)) . zip ps $ qs
-          -- ps = length . filter (uncurry (==)) . zip ps
-          -- = (.) (length . filter (uncurry (==))) . zip
-          -- = ((length . filter (uncurry (==))) .) . zip
+exactMatches = ((length . filter id) .) . zipWith (==)
 
 -- Exercise 2 -----------------------------------------
 
@@ -37,7 +33,9 @@ countColors ps = map (\c -> length . filter (== c) $ ps) colors
 
 -- Count number of matches between the actual code and the guess
 matches :: Code -> Code -> Int
-matches ps qs = sum . map (uncurry min) $ zip (countColors ps) (countColors qs)
+matches ps qs = sum $ zipWith min (countColors ps) (countColors qs)
+     -- without zipWith:
+     -- ps qs = sum . map (uncurry min) $ zip (countColors ps) (countColors qs)
      -- ps = sum . map (uncurry min) . (zip . countColors $ ps) . countColors
      -- = (sum .) . ((map (uncurry min) .) . ((. countColors) . (zip . countColors)))
      -- = (sum .) . ((map (uncurry min) .) . (flip (.) (zip . countColors) (. countColors)))

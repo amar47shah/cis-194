@@ -17,12 +17,7 @@ import qualified Data.Map.Strict as Map
 import Parser
 
 decodedBytes :: ByteString -> ByteString -> [Word8]
-decodedBytes xs ys = uncurry xor <$> BS.zip xs ys
-
---pointfree definitions
-decodedBytes', decodedBytes'' :: ByteString -> ByteString -> [Word8]
-decodedBytes'  = (((uncurry xor) <$>) .) . BS.zip
-decodedBytes'' = (fmap (uncurry xor) .) . BS.zip
+decodedBytes = BS.zipWith xor
 
 -- Exercise 1 -----------------------------------------
 
