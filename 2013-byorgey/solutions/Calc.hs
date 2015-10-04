@@ -77,8 +77,11 @@ instance Expr Mod7 where
 
 instance Expr S.Program where
   lit = (: []) . S.PushI
-  add = combine S.Add
-  mul = combine S.Mul
+  add = combineWith S.Add
+  mul = combineWith S.Mul
 
-combine :: S.StackExp -> S.Program -> S.Program -> S.Program
-combine op p q = concat [p, q, [op]]
+combineWith :: S.StackExp -> S.Program -> S.Program -> S.Program
+combineWith op p q = p ++ q ++ [op]
+
+compile :: String -> Maybe S.Program
+compile = parseExp lit add mul
