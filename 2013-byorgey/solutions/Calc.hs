@@ -7,8 +7,9 @@ import ExprT
 import Parser
 import qualified StackVM as S
 
-import Control.Monad (liftM)
+import Control.Monad (liftM, liftM2)
 import Data.Function (on)
+import qualified Data.Map.Strict as M
 
 --------------------------------------------------------------------------------
 
@@ -85,3 +86,35 @@ combineWith op p q = p ++ q ++ [op]
 
 compile :: String -> Maybe S.Program
 compile = parseExp lit add mul
+
+--------------------------------------------------------------------------------
+
+-- Exercise 6
+
+class HasVars a where
+  var :: String -> a
+
+data VarExprT = VLit Integer
+              | VAdd VarExprT VarExprT
+              | VMul VarExprT VarExprT
+              | VVar String
+  deriving (Show, Eq)
+
+instance Expr VarExprT where
+  lit = VLit
+  add = VAdd
+  mul = VMul
+
+instance HasVars VarExprT where
+  var = VVar
+
+instance Expr (M.Map String Integer -> Maybe Integer) where
+  lit = const . Just
+  add f g m = liftM2 (+) (f m) (g m)
+  mul f g m = liftM2 (*) (f m) (g m)
+
+instance HasVars (M.Map String Integer -> Maybe Integer) where
+  var = M.lookup
+
+withVars :: [(String, Integer)] -> (M.Map String Integer -> Maybe Integer) -> Maybe Integer
+withVars vs e = e $ M.fromList vs
