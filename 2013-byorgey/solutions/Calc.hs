@@ -81,17 +81,4 @@ instance Expr S.Program where
   mul = combine S.Mul
 
 combine :: S.StackExp -> S.Program -> S.Program -> S.Program
-combine op p q = concat [pushResult p, pushResult q, [op]]
-
-pushResult :: S.Program -> S.Program
-pushResult = programFromResult . S.stackVM
-
--- Raises error
-programFromResult :: Either String S.StackVal -> S.Program
-programFromResult (Left message) = error message
-programFromResult (Right value)  = programFrom value
-
-programFrom :: S.StackVal -> S.Program
-programFrom (S.IVal i) = [S.PushI i]
-programFrom (S.BVal b) = [S.PushB b]
-programFrom _          = []
+combine op p q = concat [p, q, [op]]
