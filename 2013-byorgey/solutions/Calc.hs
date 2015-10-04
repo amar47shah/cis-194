@@ -7,7 +7,7 @@ import ExprT
 import Parser
 import qualified StackVM as S
 
-import Control.Monad (liftM, liftM2)
+import Control.Applicative ((<$>), liftA2)
 import Data.Function (on)
 import qualified Data.Map.Strict as M
 
@@ -25,7 +25,7 @@ eval (Mul x y) = ((*) `on` eval) x y
 -- Exercise 2
 
 evalStr :: String -> Maybe Integer
-evalStr = liftM eval . parseExp Lit Add Mul
+evalStr = (eval <$>) . parseExp Lit Add Mul
 
 --------------------------------------------------------------------------------`
 
@@ -110,8 +110,8 @@ instance HasVars VarExprT where
 
 instance Expr (M.Map String Integer -> Maybe Integer) where
   lit = const . Just
-  add f g m = liftM2 (+) (f m) (g m)
-  mul f g m = liftM2 (*) (f m) (g m)
+  add = liftA2 $ liftA2 (+)
+  mul = liftA2 $ liftA2 (*)
 
 instance HasVars (M.Map String Integer -> Maybe Integer) where
   var = M.lookup
