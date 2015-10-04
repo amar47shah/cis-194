@@ -1,8 +1,11 @@
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE TypeSynonymInstances #-}
 {-# OPTIONS_GHC -Wall #-}
 module Calc where
 
 import ExprT
 import Parser
+import qualified StackVM as S
 
 import Control.Monad (liftM)
 import Data.Function (on)
@@ -67,3 +70,28 @@ instance Expr Mod7 where
   lit = Mod7 . (`mod` 7)
   add (Mod7 x) (Mod7 y) = lit $ x + y
   mul (Mod7 x) (Mod7 y) = lit $ x * y
+
+--------------------------------------------------------------------------------
+
+-- Exercise 5
+
+instance Expr S.Program where
+  lit = (: []) . S.PushI
+  add = combine S.Add
+  mul = combine S.Mul
+
+combine :: S.StackExp -> S.Program -> S.Program -> S.Program
+combine op p q = concat [pushResult p, pushResult q, [op]]
+
+pushResult :: S.Program -> S.Program
+pushResult = programFromResult . S.stackVM
+
+-- Raises error
+programFromResult :: Either String S.StackVal -> S.Program
+programFromResult (Left message) = error message
+programFromResult (Right value)  = programFrom value
+
+programFrom :: S.StackVal -> S.Program
+programFrom (S.IVal i) = [S.PushI i]
+programFrom (S.BVal b) = [S.PushB b]
+programFrom _          = []
