@@ -33,20 +33,20 @@ instance Show a => Show (Stream a) where
     (++ "...") . concat . (intersperse ",") . map show . take 20 . streamToList
 
 streamToList :: Stream a -> [a]
-streamToList (Cons x xs) = x : streamToList xs
+streamToList (Cons h t) = h : streamToList t
 
 --------------------------------------------------------------------------------
 
 -- Exercise 4
 
 streamRepeat :: a -> Stream a
-streamRepeat x = Cons x $ streamRepeat x
+streamRepeat e = Cons e $ streamRepeat e
 
 streamMap :: (a -> b) -> Stream a -> Stream b
-streamMap f (Cons x xs) = Cons (f x) $ streamMap f xs
+streamMap f (Cons h t) = Cons (f h) $ streamMap f t
 
 streamFromSeed :: (a -> a) -> a -> Stream a
-streamFromSeed f x = Cons x . streamFromSeed f $ f x
+streamFromSeed f h = Cons h . streamFromSeed f $ f h
 
 --------------------------------------------------------------------------------
 
@@ -56,7 +56,7 @@ nats :: Stream Integer
 nats = streamFromSeed succ 0
 
 streamInterleave :: Stream a -> Stream a -> Stream a
-streamInterleave (Cons x xs) ys = Cons x $ streamInterleave ys xs
+streamInterleave (Cons h t) s = Cons h $ streamInterleave s t
 
 ruler :: Stream Integer
 ruler = streamInterleave (streamRepeat 0) $ streamMap succ ruler
