@@ -1,6 +1,8 @@
 {-# OPTIONS_GHC -Wall #-}
 module Fibonacci where
 
+import Data.List (intersperse)
+
 --------------------------------------------------------------------------------
 
 -- Exercise 1
@@ -27,7 +29,8 @@ fibs2 = 0 : 1 : zipWith (+) fibs2 (tail fibs2)
 data Stream a = Cons a (Stream a)
 
 instance Show a => Show (Stream a) where
-  show = (++ ", continuing...") . show . take 20 . streamToList
+  show =
+    (++ "...") . concat . (intersperse ",") . map show . take 20 . streamToList
 
 streamToList :: Stream a -> [a]
 streamToList (Cons x xs) = x : streamToList xs
