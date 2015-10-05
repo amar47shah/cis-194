@@ -60,3 +60,10 @@ streamInterleave (Cons h t) s = Cons h $ streamInterleave s t
 
 ruler :: Stream Integer
 ruler = streamInterleave (streamRepeat 0) $ streamMap succ ruler
+
+--------------------------------------------------------------------------------
+
+-- Exercise 6
+
+x :: Stream Integer
+x = Cons 0 . Cons 1 $ streamRepeat 0
