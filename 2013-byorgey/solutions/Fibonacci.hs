@@ -56,8 +56,7 @@ nats :: Stream Integer
 nats = streamFromSeed succ 0
 
 streamInterleave :: Stream a -> Stream a -> Stream a
-streamInterleave (Cons x xs) (Cons y ys) =
-  Cons x . Cons y $ streamInterleave xs ys
+streamInterleave (Cons x xs) ys = Cons x $ streamInterleave ys xs
 
 ruler :: Stream Integer
-ruler = Cons 0 . streamInterleave (streamMap succ ruler) $ streamRepeat 0
+ruler = streamInterleave (streamRepeat 0) $ streamMap succ ruler
