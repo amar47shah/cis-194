@@ -1,4 +1,6 @@
+{-# LANGUAGE FlexibleInstances #-}
 {-# OPTIONS_GHC -Wall #-}
+{-# OPTIONS_GHC -fno-warn-missing-methods #-}
 module Fibonacci where
 
 import Data.List (intersperse)
@@ -67,3 +69,12 @@ ruler = streamInterleave (streamRepeat 0) $ streamMap succ ruler
 
 x :: Stream Integer
 x = Cons 0 . Cons 1 $ streamRepeat 0
+
+streamZipWith :: (a -> b -> c) -> Stream a -> Stream b -> Stream c
+streamZipWith f (Cons h t) (Cons h' t') = Cons (f h h') $ streamZipWith f t t'
+
+instance Num (Stream Integer) where
+  fromInteger = flip Cons $ streamRepeat 0
+  negate = streamMap negate
+  (+) = streamZipWith (+)
+  (Cons h t) * s'@(Cons h' t') = Cons (h * h') $ streamMap (h *) t' + t * s'
