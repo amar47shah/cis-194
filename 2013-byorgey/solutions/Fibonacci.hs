@@ -78,3 +78,12 @@ instance Num (Stream Integer) where
   negate = streamMap negate
   (+) = streamZipWith (+)
   (Cons h t) * s'@(Cons h' t') = Cons (h * h') $ streamMap (h *) t' + t * s'
+
+instance Fractional (Stream Integer) where
+  s@(Cons h t) / s'@(Cons h' t') =
+    Cons (h `div` h') . streamMap (`div` h') $ t - s * t' / s'
+
+fibs3 :: Stream Integer
+fibs3 = x / (1 - x - x^2)
+-- To avoid warnings, you can use
+-- fibs3 = x / (fromInteger 1 - x - x^(2 :: Integer))
