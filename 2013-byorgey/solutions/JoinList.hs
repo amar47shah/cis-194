@@ -1,6 +1,6 @@
+{-# OPTIONS_GHC -Wall #-}
 module JoinList where
 
-import Data.Function (on)
 import Data.Monoid ((<>))
 
 data JoinList m a = Empty
