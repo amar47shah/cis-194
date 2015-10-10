@@ -41,12 +41,14 @@ testIndexJ i jl = indexJ i jl == (jlToList jl !!? i)
 -- Exercise 2
 
 indexJ :: (Sized b, Monoid b) => Int -> JoinList b a -> Maybe a
-indexJ _ Empty                       = Nothing
-indexJ i _              | i < 0      = Nothing
-indexJ i (Single _ x)   | 0 < i      = Nothing
-                        | otherwise  = Just x
-indexJ i (Append t l r) | overC >= 0 = Nothing
-                        | overL <  0 = indexJ i     l
-                        | otherwise  = indexJ overL r
+indexJ i _ | i < 0      = Nothing
+indexJ _  Empty         = Nothing
+indexJ i (Single _ x)
+   | i > 0              = Nothing
+   | otherwise          = Just x
+indexJ i (Append t l r)
+   | overC >= 0         = Nothing
+   | overL <  0         = indexJ i     l
+   | otherwise          = indexJ overL r
   where overC = i - (getSize . size) t
         overL = i - (getSize . size . tag) l
