@@ -35,35 +35,45 @@ jlToList Empty            = []
 jlToList (Single _ a)     = [a]
 jlToList (Append _ l1 l2) = jlToList l1 ++ jlToList l2
 
-testIndexJ :: Int -> JoinList Size Char -> Bool
-testIndexJ i jl = indexJ i jl == (jlToList jl !!? i)
+propIndexJ :: Int -> JoinList Size Char -> Bool
+propIndexJ i jl = indexJ i jl == (jlToList jl !!? i)
 
-testDropJ :: Int -> JoinList Size Char -> Bool
-testDropJ i jl = jlToList (dropJ i jl) == drop i (jlToList jl)
+propDropJ :: Int -> JoinList Size Char -> Bool
+propDropJ i jl = jlToList (dropJ i jl) == drop i (jlToList jl)
+
+test :: (Int -> JoinList Size Char -> Bool) -> Bool
+test p = all (\i -> p i joinList) [-1..5]
+  where joinList = Append 4 (Append 2 (Single 1 'D') (Single 1 'C'))
+                            (Append 2 (Single 1 'A') (Single 1 'B'))
 
 -- Exercise 2
 
 indexJ :: (Sized b, Monoid b) => Int -> JoinList b a -> Maybe a
-indexJ i  _ | i < 0     = Nothing
 indexJ _  Empty         = Nothing
 indexJ i (Single _ x)
    | i > 0              = Nothing
+   | i < 0              = Nothing
    | otherwise          = Just x
 indexJ i (Append t l r)
    | overC >= 0         = Nothing
+   | i     <  0         = Nothing
+   | i     == 0         = indexJ 0     l
    | overL <  0         = indexJ i     l
    | otherwise          = indexJ overL r
   where overC = i - (getSize . size) t
         overL = i - (getSize . size . tag) l
 
 dropJ :: (Sized b, Monoid b) => Int -> JoinList b a -> JoinList b a
-dropJ i  j | i <= 0    = j
-dropJ _  Empty         = Empty
-dropJ _ (Single _ _)   = Empty
-dropJ i (Append t l r)
-   | overC >= 0        = Empty
-   | overL < 0         = Append (tag l' <> tag r) l' r
-   | otherwise         = dropJ overL r
+dropJ _  Empty            = Empty
+dropJ i jl@(Single _ _)
+   | i > 0                = Empty
+   | i < 0                = jl
+   | otherwise            = jl
+dropJ i jl@(Append t l r)
+   | overC >= 0           = Empty
+   | i     < 0            = jl
+   | i     == 0           = jl
+   | overL <  0           = Append (tag (dropJ i l) <> tag r) (dropJ i l) r
+   | otherwise            = dropJ overL r
   where overC = i - (getSize . size) t
         overL = i - (getSize . size . tag) l
-        l'    = dropJ i l
