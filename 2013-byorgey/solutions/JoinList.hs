@@ -41,6 +41,9 @@ propIndexJ i jl = indexJ i jl == (jlToList jl !!? i)
 propDropJ :: Int -> JoinList Size Char -> Bool
 propDropJ i jl = jlToList (dropJ i jl) == drop i (jlToList jl)
 
+propTakeJ :: Int -> JoinList Size Char -> Bool
+propTakeJ i jl = jlToList (takeJ i jl) == take i (jlToList jl)
+
 test :: (Int -> JoinList Size Char -> Bool) -> Bool
 test p = all (\i -> p i joinList) [-1..5]
   where joinList = Append 4 (Append 2 (Single 1 'D') (Single 1 'C'))
@@ -71,9 +74,24 @@ dropJ i jl@(Single _ _)
    | otherwise            = jl
 dropJ i jl@(Append t l r)
    | overC >= 0           = Empty
-   | i     < 0            = jl
+   | i     <  0           = jl
    | i     == 0           = jl
    | overL <  0           = Append (tag (dropJ i l) <> tag r) (dropJ i l) r
    | otherwise            = dropJ overL r
+  where overC = i - (getSize . size) t
+        overL = i - (getSize . size . tag) l
+
+takeJ :: (Sized b, Monoid b) => Int -> JoinList b a -> JoinList b a
+takeJ _ Empty             = Empty
+takeJ i jl@(Single _ _)
+   | i > 0                = jl
+   | i < 0                = Empty
+   | otherwise            = Empty
+takeJ i jl@(Append t l r)
+   | overC >= 0           = jl
+   | i     <  0           = Empty
+   | i     == 0           = Empty
+   | overL <= 0           = takeJ i l
+   | otherwise            = Append (tag l <> tag (takeJ overL r)) l (takeJ overL r)
   where overC = i - (getSize . size) t
         overL = i - (getSize . size . tag) l
