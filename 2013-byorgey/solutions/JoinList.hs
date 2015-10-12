@@ -1,6 +1,7 @@
 {-# OPTIONS_GHC -Wall #-}
 module JoinList where
 
+import Scrabble
 import Sized
 
 import Data.Monoid ((<>))
@@ -95,3 +96,10 @@ takeJ i jl@(Append t l r)
    | otherwise            = Append (tag l <> tag (takeJ overL r)) l (takeJ overL r)
   where overC = i - (getSize . size) t
         overL = i - (getSize . size . tag) l
+
+--------------------------------------------------------------------------------
+
+-- Exercise 3
+
+scoreLine :: String -> JoinList Score String
+scoreLine = scoreString >>= Single
