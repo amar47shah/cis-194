@@ -1,9 +1,12 @@
+{-# LANGUAGE FlexibleInstances #-}
 {-# OPTIONS_GHC -Wall #-}
 module JoinList where
 
+import Buffer
 import Scrabble
 import Sized
 
+import Data.List (intercalate)
 import Data.Monoid ((<>))
 
 data JoinList m a = Empty
@@ -103,3 +106,15 @@ takeJ i jl@(Append t l r)
 
 scoreLine :: String -> JoinList Score String
 scoreLine = scoreString >>= Single
+
+--------------------------------------------------------------------------------
+
+-- Exercise 4
+
+instance Buffer (JoinList (Score, Size) String) where
+  toString = intercalate " " . jlToList
+  fromString s = Single (scoreString s, 1) s
+  line = indexJ
+  replaceLine = undefined
+  numLines = undefined
+  value = undefined
