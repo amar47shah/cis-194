@@ -10,6 +10,9 @@ instance Monoid Score where
   mempty = Score 0
   mappend = (+)
 
+getScore :: Score -> Int
+getScore (Score i) = i
+
 score :: Char -> Score
 score c
    | c `elemAlpha` "QZ"         = Score 10

@@ -115,6 +115,6 @@ instance Buffer (JoinList (Score, Size) String) where
   toString = intercalate " " . jlToList
   fromString s = Single (scoreString s, 1) s
   line = indexJ
-  replaceLine = undefined
-  numLines = undefined
-  value = undefined
+  replaceLine i s jl = takeJ i jl +++ fromString s +++ dropJ (i + 1) jl
+  numLines = getSize . snd . tag
+  value = getScore . fst . tag
