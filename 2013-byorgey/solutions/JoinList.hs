@@ -3,6 +3,7 @@
 module JoinList where
 
 import Buffer
+import Editor
 import Scrabble
 import Sized
 
@@ -118,3 +119,13 @@ instance Buffer (JoinList (Score, Size) String) where
   replaceLine i s jl = takeJ i jl +++ fromString s +++ dropJ (i + 1) jl
   numLines = getSize . snd . tag
   value = getScore . fst . tag
+
+
+main :: IO ()
+main = runEditor editor $
+       ( fromString "This buffer is for notes you don't want to save, and for"
+         +++ fromString "evaluation of steam valve coefficients."
+         +++ fromString "To load a different file, type the character L followed"
+         +++ fromString "by the name of the file."
+         :: JoinList (Score, Size) String
+       )
