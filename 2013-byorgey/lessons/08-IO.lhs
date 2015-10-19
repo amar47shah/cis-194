@@ -196,6 +196,10 @@ main = putStrLn "Please enter a number: " >> (readLn >>= (\n -> putStrLn (show (
 Of course, this looks kind of ugly, but there are better ways to write it, which
 we'll talk about in the future.
 
+~~~~ {.haskell}
+main :: IO ()
+main = putStrLn "Please enter a number: " >> readLn >>= putStrLn . show . (+1)
+~~~~
 
 Record syntax
 -------------
