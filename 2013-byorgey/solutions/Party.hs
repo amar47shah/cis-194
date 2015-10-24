@@ -52,3 +52,10 @@ treeFold' f bop (Node rl ts) = foldl' accumulate initial ts
 
 nextLevel :: Employee -> [(GuestList, GuestList)] -> (GuestList, GuestList)
 nextLevel boss = glCons boss . mconcat . map snd &&& mconcat . map fst
+
+--------------------------------------------------------------------------------
+
+-- Exercise 4
+
+maxFun :: Tree Employee -> GuestList
+maxFun = uncurry moreFun . treeFold nextLevel
