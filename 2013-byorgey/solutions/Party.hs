@@ -5,7 +5,9 @@ module Party where
 
 import Employee
 
+import Data.List (foldl')
 import Data.Monoid ((<>))
+import Data.Tree
 
 --------------------------------------------------------------------------------
 
@@ -24,3 +26,12 @@ instance Monoid GuestList where
 
 moreFun :: GuestList -> GuestList -> GuestList
 moreFun = max
+
+--------------------------------------------------------------------------------
+
+-- Exercise 2
+
+treeFold :: (a -> b) -> (b -> b -> b) -> Tree a -> b
+treeFold f bop (Node rl ts) = foldl' accumulate initial ts
+  where accumulate folded t = folded `bop` treeFold f bop t
+        initial = f rl
