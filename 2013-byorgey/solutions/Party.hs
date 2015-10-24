@@ -31,7 +31,12 @@ moreFun = max
 
 -- Exercise 2
 
-treeFold :: (a -> b) -> (b -> b -> b) -> Tree a -> b
-treeFold f bop (Node rl ts) = foldl' accumulate initial ts
-  where accumulate folded t = folded `bop` treeFold f bop t
+-- Bottom-up folding of each tree in forest, left-to-right
+treeFold :: (a -> [b] -> b) -> Tree a -> b
+treeFold f (Node rl ts) = f rl $ map (treeFold f) ts
+
+-- Top-down folding of each tree in forest, left-to-right
+treeFold' :: (a -> b) -> (b -> b -> b) -> Tree a -> b
+treeFold' f bop (Node rl ts) = foldl' accumulate initial ts
+  where accumulate folded t = folded `bop` treeFold' f bop t
         initial = f rl
