@@ -6,7 +6,7 @@ module Party where
 import Employee
 
 import Control.Arrow ((&&&))
-import Data.List (foldl')
+import Data.List (intercalate, foldl', sortOn)
 import Data.Monoid ((<>))
 import Data.Tree
 
@@ -59,3 +59,23 @@ nextLevel boss = glCons boss . mconcat . map snd &&& mconcat . map fst
 
 maxFun :: Tree Employee -> GuestList
 maxFun = uncurry moreFun . treeFold nextLevel
+
+--------------------------------------------------------------------------------
+
+-- Exercise 5
+
+glSort :: GuestList -> GuestList
+glSort (GL es f) = GL (sortOn empName es) f
+
+glFormat :: GuestList -> String
+glFormat (GL es f) = intercalate "\n" $
+                     ("Total fun: " ++ show f) : map empName es
+
+processCompany :: String -> String
+processCompany = glFormat . glSort . maxFun . read
+
+companyFile :: FilePath
+companyFile = "../resources/company.txt"
+
+main :: IO ()
+main = processCompany <$> readFile companyFile >>= putStrLn
