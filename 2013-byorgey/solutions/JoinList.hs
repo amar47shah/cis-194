@@ -87,7 +87,7 @@ dropJ i jl@(Append t l r)
    | i >= wholeSize       = Empty
    | i >  leftSize        = dropJ (i - leftSize) r
    | i == leftSize        = r
-   | i >  0               = let l' = dropJ i l in Append (tag l' <> tag r) l' r
+   | i >  0               = dropJ i l +++ r
    | i == 0               = jl
    | otherwise            = jl
   where wholeSize = getSize . size $ t
@@ -101,8 +101,7 @@ takeJ i jl@(Single _ _)
    | otherwise            = Empty
 takeJ i jl@(Append t l r)
    | i >= wholeSize       = jl
-   | i >  leftSize        = let r' = takeJ (i - leftSize) r
-                             in Append (tag l <> tag r') l r'
+   | i >  leftSize        = l +++ takeJ (i - leftSize) r
    | i == leftSize        = l
    | i >  0               = takeJ i l
    | i == 0               = Empty
