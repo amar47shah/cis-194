@@ -6,7 +6,7 @@ module Party where
 import Employee
 
 import Control.Arrow ((&&&))
-import Data.List (intercalate, foldl', sortOn)
+import Data.List (foldl', sortOn)
 import Data.Monoid ((<>))
 import Data.Tree
 
@@ -68,8 +68,7 @@ glSort :: GuestList -> GuestList
 glSort (GL es f) = GL (sortOn empName es) f
 
 glFormat :: GuestList -> String
-glFormat (GL es f) = intercalate "\n" $
-                     ("Total fun: " ++ show f) : map empName es
+glFormat (GL es f) = unlines $ ("Total fun: " ++ show f) : map empName es
 
 processCompany :: String -> String
 processCompany = glFormat . glSort . maxFun . read
