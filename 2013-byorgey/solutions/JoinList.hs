@@ -59,47 +59,51 @@ test p = all (\i -> p i joinList) [-1..5]
 indexJ :: (Sized b, Monoid b) => Int -> JoinList b a -> Maybe a
 indexJ _  Empty         = Nothing
 indexJ i (Single _ x)
-   | i > 0              = Nothing
-   | i < 0              = Nothing
-   | otherwise          = Just x
+   | i >  0             = Nothing
+   | i == 0             = Just x
+   | otherwise          = Nothing
 indexJ i (Append t l r)
-   | overC >= 0         = Nothing
-   | i     <  0         = Nothing
-   | i     == 0         = indexJ 0     l
-   | overL <  0         = indexJ i     l
-   | otherwise          = indexJ overL r
-  where overC = i - (getSize . size) t
-        overL = i - (getSize . size . tag) l
+   | i >= wholeSize     = Nothing
+   | i >  leftSize      = indexJ (i - leftSize) r
+   | i == leftSize      = indexJ 0 r
+   | i >  0             = indexJ i l
+   | i == 0             = indexJ 0 l
+   | otherwise          = Nothing
+  where wholeSize = getSize . size $ t
+        leftSize  = getSize . size $ tag l
 
 dropJ :: (Sized b, Monoid b) => Int -> JoinList b a -> JoinList b a
 dropJ _  Empty            = Empty
 dropJ i jl@(Single _ _)
-   | i > 0                = Empty
-   | i < 0                = jl
+   | i >  0               = Empty
+   | i == 0               = jl
    | otherwise            = jl
 dropJ i jl@(Append t l r)
-   | overC >= 0           = Empty
-   | i     <  0           = jl
-   | i     == 0           = jl
-   | overL <  0           = Append (tag (dropJ i l) <> tag r) (dropJ i l) r
-   | otherwise            = dropJ overL r
-  where overC = i - (getSize . size) t
-        overL = i - (getSize . size . tag) l
+   | i >= wholeSize       = Empty
+   | i >  leftSize        = dropJ (i - leftSize) r
+   | i == leftSize        = r
+   | i >  0               = let l' = dropJ i l in Append (tag l' <> tag r) l' r
+   | i == 0               = jl
+   | otherwise            = jl
+  where wholeSize = getSize . size $ t
+        leftSize  = getSize . size $ tag l
 
 takeJ :: (Sized b, Monoid b) => Int -> JoinList b a -> JoinList b a
 takeJ _ Empty             = Empty
 takeJ i jl@(Single _ _)
-   | i > 0                = jl
-   | i < 0                = Empty
+   | i >  0               = jl
+   | i == 0               = Empty
    | otherwise            = Empty
 takeJ i jl@(Append t l r)
-   | overC >= 0           = jl
-   | i     <  0           = Empty
-   | i     == 0           = Empty
-   | overL <= 0           = takeJ i l
-   | otherwise            = Append (tag l <> tag (takeJ overL r)) l (takeJ overL r)
-  where overC = i - (getSize . size) t
-        overL = i - (getSize . size . tag) l
+   | i >= wholeSize       = jl
+   | i >  leftSize        = let r' = takeJ (i - leftSize) r
+                             in Append (tag l <> tag r') l r'
+   | i == leftSize        = l
+   | i >  0               = takeJ i l
+   | i == 0               = Empty
+   | otherwise            = Empty
+  where wholeSize = getSize . size $ t
+        leftSize  = getSize . size $ tag l
 
 --------------------------------------------------------------------------------
 
