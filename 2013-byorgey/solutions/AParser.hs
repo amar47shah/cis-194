@@ -64,3 +64,15 @@ posInt = Parser f
 
 first :: (a -> b) -> (a, c) -> (b, c)
 first f (x, y) = (f x, y)
+
+--------------------------------------------------------------------------------
+
+-- Exercise 2
+
+instance Functor Parser where
+  fmap f (Parser p) = undefined
+
+instance Applicative Parser where
+  pure x = Parser $ \s -> Just ((,) (x, s)
+    -- = Parser . (Just .) . (,)
+  (<*>) = undefined
