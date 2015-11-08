@@ -4,9 +4,8 @@
 
 module AParser where
 
-import           Control.Applicative
-
-import           Data.Char
+import Control.Applicative
+import Data.Char
 
 -- A parser for a value of type a is a function which takes a String
 -- represnting the input to be parsed, and succeeds or fails; if it
@@ -73,6 +72,10 @@ instance Functor Parser where
   fmap f (Parser p) = undefined
 
 instance Applicative Parser where
-  pure x = Parser $ \s -> Just ((,) (x, s)
-    -- = Parser . (Just .) . (,)
-  (<*>) = undefined
+  pure = Parser . (Just .) . (,)
+  p1 <*> p2 = Parser $
+    \s -> case runParser p1 s of
+            Nothing -> Nothing
+            Just (f, s') -> case runParser p2 s' of
+                              Nothing -> Nothing
+                              Just (x, s'') -> Just (f x, s'')
