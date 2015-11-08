@@ -74,8 +74,4 @@ instance Functor Parser where
 instance Applicative Parser where
   pure = Parser . (Just .) . (,)
   p1 <*> p2 = Parser $
-    \s -> case runParser p1 s of
-            Nothing -> Nothing
-            Just (f, s') -> case runParser p2 s' of
-                              Nothing -> Nothing
-                              Just (x, s'') -> Just (f x, s'')
+    \s -> runParser p1 s >>= \(f, s') -> runParser p2 s' >>= Just . first f
