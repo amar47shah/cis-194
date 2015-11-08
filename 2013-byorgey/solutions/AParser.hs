@@ -75,3 +75,12 @@ instance Applicative Parser where
   pure x = Parser $ Just . (,) x
   p1 <*> p2 = Parser $
     \s -> runParser p1 s >>= \(f, s') -> runParser p2 s' >>= Just . first f
+
+abParser :: Parser (Char, Char)
+abParser = (,) <$> char 'a' <*> char 'b'
+
+abParser_ :: Parser ()
+abParser_ = const () <$> abParser
+
+intPair :: Parser [Integer]
+intPair = (:) <$> posInt <*> (const (:[]) <$> char ' ' <*> posInt)
