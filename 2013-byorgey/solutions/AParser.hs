@@ -88,3 +88,11 @@ abParser_ = const () <$> abParser
 
 intPair :: Parser [Integer]
 intPair = (:) <$> posInt <*> (const (:[]) <$> char ' ' <*> posInt)
+
+--------------------------------------------------------------------------------
+
+-- Exercise 4
+
+instance Alternative Parser where
+  empty = Parser $ const empty
+  p1 <|> p2 = Parser $ (<|>) <$> runParser p1 <*> runParser p2
