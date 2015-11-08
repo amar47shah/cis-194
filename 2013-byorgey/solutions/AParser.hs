@@ -69,7 +69,7 @@ first f (x, y) = (f x, y)
 -- Exercise 2
 
 instance Functor Parser where
-  fmap f (Parser p) = undefined
+  fmap = (<*>) . pure
 
 instance Applicative Parser where
   pure = Parser . (Just .) . (,)
