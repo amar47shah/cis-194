@@ -76,6 +76,10 @@ instance Applicative Parser where
   p1 <*> p2 = Parser $
     \s -> runParser p1 s >>= \(f, s') -> runParser p2 s' >>= Just . first f
 
+--------------------------------------------------------------------------------
+
+-- Exercise 3
+
 abParser :: Parser (Char, Char)
 abParser = (,) <$> char 'a' <*> char 'b'
 
