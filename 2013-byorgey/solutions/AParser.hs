@@ -69,7 +69,7 @@ first f (x, y) = (f x, y)
 -- Exercise 2
 
 instance Functor Parser where
-  fmap f x = pure f <*> x
+  fmap f p = Parser $ \s -> runParser p s >>= Just . first f
 
 instance Applicative Parser where
   pure x = Parser $ Just . (,) x
