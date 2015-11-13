@@ -8,6 +8,23 @@ import AParser
 import Control.Applicative
 
 ------------------------------------------------------------
+-- End-of-Lesson Questions
+------------------------------------------------------------
+
+(*>) :: Applicative f => f a -> f b -> f b
+(*>) = liftA2 $ flip const
+
+mapA :: Applicative f => (a -> f b) -> ([a] -> f [b])
+mapA = (sequenceA' .) . map
+
+sequenceA' :: Applicative f => [f a] -> f [a]
+sequenceA' (x:xs) = (:) <$> x <*> sequenceA' xs
+sequenceA' _      = pure []
+
+replicateA :: Applicative f => Int -> f a -> f [a]
+replicateA = (sequenceA' .) . replicate
+
+------------------------------------------------------------
 --  1. Parsing repetitions
 ------------------------------------------------------------
 
