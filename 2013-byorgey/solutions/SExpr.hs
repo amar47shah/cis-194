@@ -1,6 +1,7 @@
 {- CIS 194 HW 11
    due Monday, 8 April
 -}
+{-# OPTIONS_GHC -Wall #-}
 
 module SExpr where
 
@@ -29,10 +30,10 @@ replicateA = (sequenceA' .) . replicate
 ------------------------------------------------------------
 
 zeroOrMore :: Parser a -> Parser [a]
-zeroOrMore p = undefined
+zeroOrMore p = oneOrMore p <|> pure []
 
 oneOrMore :: Parser a -> Parser [a]
-oneOrMore p = undefined
+oneOrMore p = (:) <$> p <*> zeroOrMore p
 
 ------------------------------------------------------------
 --  2. Utilities
