@@ -64,3 +64,21 @@ data Atom = N Integer | I Ident
 data SExpr = A Atom
            | Comb [SExpr]
   deriving Show
+
+atom :: Parser Atom
+atom = N <$> posInt <|> I <$> ident
+
+trim :: Parser SExpr -> Parser SExpr
+trim p = spaces *> p <* spaces
+
+open :: Parser Char
+open = char '('
+
+close :: Parser Char
+close = char ')'
+
+enclose :: Parser SExpr -> Parser SExpr
+enclose p = open *> p <* close
+
+parseSExpr :: Parser SExpr
+parseSExpr = trim $ A <$> atom <|> (enclose $ Comb <$> oneOrMore parseSExpr)
