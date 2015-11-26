@@ -6,8 +6,9 @@
 module SExpr where
 
 import AParser
-import Control.Applicative
+import Control.Applicative hiding ((*>))
 import Data.Char (isAlpha, isAlphaNum, isSpace)
+import Prelude hiding ((*>), sequenceA)
 
 ------------------------------------------------------------
 -- End-of-Lesson Questions
@@ -17,14 +18,14 @@ import Data.Char (isAlpha, isAlphaNum, isSpace)
 (*>) = liftA2 $ flip const
 
 mapA :: Applicative f => (a -> f b) -> ([a] -> f [b])
-mapA = (sequenceA' .) . map
+mapA = (sequenceA .) . map
 
-sequenceA' :: Applicative f => [f a] -> f [a]
-sequenceA' (x:xs) = (:) <$> x <*> sequenceA' xs
-sequenceA' _      = pure []
+sequenceA :: Applicative f => [f a] -> f [a]
+sequenceA (x:xs) = (:) <$> x <*> sequenceA xs
+sequenceA _      = pure []
 
 replicateA :: Applicative f => Int -> f a -> f [a]
-replicateA = (sequenceA' .) . replicate
+replicateA = (sequenceA .) . replicate
 
 ------------------------------------------------------------
 --  1. Parsing repetitions
