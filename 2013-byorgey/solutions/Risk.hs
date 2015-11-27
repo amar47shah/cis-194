@@ -65,3 +65,7 @@ invade :: Battlefield -> Rand StdGen Battlefield
 invade b
  | over b    = return b
  | otherwise = battle b >>= invade
+
+successProb :: Battlefield -> Rand StdGen Double
+successProb = fmap calculate . replicateM 1000 . invade
+  where calculate = (/ 1000) . fromIntegral . length . filter won
