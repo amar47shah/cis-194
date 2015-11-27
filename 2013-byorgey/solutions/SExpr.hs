@@ -81,4 +81,4 @@ enclose :: Parser SExpr -> Parser SExpr
 enclose p = open *> p <* close
 
 parseSExpr :: Parser SExpr
-parseSExpr = trim $ A <$> atom <|> (enclose $ Comb <$> oneOrMore parseSExpr)
+parseSExpr = trim $ fmap A atom <|> (enclose . fmap Comb . oneOrMore) parseSExpr
