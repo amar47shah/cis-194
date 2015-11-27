@@ -50,3 +50,17 @@ settle (a, d) b
 
 battle :: Battlefield -> Rand StdGen Battlefield
 battle b = foldr settle b <$> match b
+
+spent :: Battlefield -> Bool
+spent = (== 0) . attacking
+
+won :: Battlefield -> Bool
+won = (== 0) . defending
+
+over :: Battlefield -> Bool
+over = uncurry (||) . (spent &&& won)
+
+invade :: Battlefield -> Rand StdGen Battlefield
+invade b
+ | over b    = return b
+ | otherwise = battle b >>= invade
