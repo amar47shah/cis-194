@@ -2,9 +2,11 @@
 {-# LANGUAGE OverloadedStrings, RecordWildCards #-}
 module HW05 where
 
+import Control.Applicative (liftA2)
+import Control.Arrow ((***))
 import Data.Bits (xor)
 import Data.ByteString.Lazy (ByteString)
-import Data.Functor ((<$>))
+import Data.Function (on)
 import Data.List (sortBy)
 import Data.Map.Strict (Map)
 import Data.Maybe (fromJust)
@@ -21,44 +23,32 @@ decodedBytes = BS.zipWith xor
 
 -- Exercise 1 -----------------------------------------
 
+extractSecret :: ByteString -> ByteString -> ByteString
+extractSecret = ((BS.pack . filter (/= 0)) .) . decodedBytes
+
 getSecret :: FilePath -> FilePath -> IO ByteString
-getSecret origPath modPath = do
-  original <- BS.readFile origPath
-  modified <- BS.readFile modPath
-  return . BS.pack . filter (/= 0) $ decodedBytes original modified
+getSecret = liftA2 extractSecret `on` BS.readFile
 
 -- Exercise 2 -----------------------------------------
 
 decryptWithKey :: ByteString -> FilePath -> IO ()
-decryptWithKey key outPath = do
-  let inPath = outPath ++ ".enc"
-  encoded <- BS.readFile inPath
-  decoded <- return . BS.pack . decodedBytes encoded $ BS.cycle key
-  BS.writeFile outPath decoded
+decryptWithKey k out =
+  BS.readFile (out ++ ".enc") >>= return . decrypt k >>= BS.writeFile out
+
+decrypt :: ByteString -> ByteString -> ByteString
+decrypt k e = BS.pack . decodedBytes e $ BS.cycle k
 
 -- Apply what we've accomplished so far.
 writeVictims :: IO ()
-writeVictims = do
-  let origPath   = "../resources/clues/dog-original.jpg"
-  let modPath    = "../resources/clues/dog.jpg"
-  let resultPath = "../resources/clues/victims.json"
-  key <- getSecret origPath modPath
-  decryptWithKey key resultPath
+writeVictims = getSecret origPath modPath >>= (`decryptWithKey` outPath)
+  where origPath = "../resources/clues/dog-original.jpg"
+        modPath  = "../resources/clues/dog.jpg"
+        outPath  = "../resources/clues/victims.json"
 
 -- Exercise 3 -----------------------------------------
 
 parseFile :: FromJSON a => FilePath -> IO (Maybe a)
 parseFile = (decode <$>) . BS.readFile
-
--- in pointed notation
-parseFile' :: FromJSON a => FilePath -> IO (Maybe a)
-parseFile' jsonPath = decode <$> BS.readFile jsonPath
-
--- in do-notation
-parseFile'' :: FromJSON a => FilePath -> IO (Maybe a)
-parseFile'' jsonPath = do
-  json <- BS.readFile jsonPath
-  return $ decode json
 
 transactions :: IO (Maybe [Transaction])
 transactions = parseFile "../resources/clues/transactions.json"
@@ -68,41 +58,43 @@ victims = parseFile "../resources/clues/victims.json"
 
 -- Exercise 4 -----------------------------------------
 
+(<$$$>) :: (Functor f, Functor g) => (a -> b) -> f (g a) -> f (g b)
+(<$$$>) = (<$>) <$> (<$>)
+
+infixl 4 <$$$>
+
+(<***>) :: (Applicative f, Applicative g) => f (g (a -> b)) -> f (g a) -> f (g b)
+(<***>) = liftA2 (<*>)
+
+infixl 4 <***>
+
+findTs :: [TId] -> [Transaction] -> [Transaction]
+findTs ids = filter $ (`elem` ids) . tid
+
 getBadTs :: FilePath -> FilePath -> IO (Maybe [Transaction])
-getBadTs badIdsPath transactionsPath = do
-  maybeIds <- parseFile badIdsPath       :: IO (Maybe [TId])
-  maybeTs  <- parseFile transactionsPath :: IO (Maybe [Transaction])
-  case (maybeIds, maybeTs) of
-       (Just ids, Just ts) -> return . Just $ filter ((`elem` ids) . tid) ts
-       _                   -> return Nothing
+getBadTs badIdsPath transactionsPath =
+  let ids = parseFile badIdsPath       :: IO (Maybe [TId])
+      ts  = parseFile transactionsPath :: IO (Maybe [Transaction])
+   in findTs <$$$> ids <***> ts
 
 badTs :: IO (Maybe [Transaction])
 badTs = getBadTs "../resources/clues/victims.json"
                  "../resources/clues/transactions.json"
 
-testBadTsAndVictimsHaveEqualSize :: IO Bool
-testBadTsAndVictimsHaveEqualSize = do
-  Just ts <- badTs
-  Just vs <- victims
-  return $ length ts == length vs
+testBadTsAndVictimsHaveEqualSize :: IO (Maybe Bool)
+testBadTsAndVictimsHaveEqualSize =
+  ((uncurry (==) . (length *** length)) .) . (,) <$$$> badTs <***> victims
 
 -- Exercise 5 -----------------------------------------
 
 getFlow :: [Transaction] -> Map String Integer
 getFlow = foldr recordT Map.empty
-  where recordT (Transaction { from = f, to = t, amount = a }) m =
-          amend t a $ amend f (negate a) m
-        amend member flow m' =
-          case Map.lookup member m' of
-            Just current -> Map.insert member (flow + current) m'
-            Nothing      -> Map.insert member  flow            m'
+      where
+  recordT (Transaction f t amt _) =
+    Map.insertWith (+) t amt . Map.insertWith (+) f (negate amt)
 
 damage :: IO (Map String Integer)
 damage = getFlow <$> fromJust <$> badTs
-
-damage' :: IO (Map String Integer)
-damage' = do Just ts <- badTs
-             return $ getFlow ts
 
 -- Exercise 6 -----------------------------------------
 
@@ -126,20 +118,21 @@ payees m = (sortBy ascendingLoss) . Map.keys . Map.filter (< 0) $ m
   where ascendingLoss p q = (m Map.! p) `compare` (m Map.! q)
 
 undoTs :: Map String Integer -> [TId] -> [Transaction]
-undoTs m tids =
-  if any null [payers m, payees m, tids]
-  then []
-  else (transaction :) . undoTs adjustedMap $ ts where
-       (transaction, adjustedMap) = repay m payer payee t
-       payer : _  = payers m
-       payee : _  = payees m
-       t     : ts = tids
-       repay m' pr pe tid =
-             (Transaction { from=pr, to=pe, amount=toPay, tid=tid }, m'') where
-             m'' = Map.adjust (subtract toPay) pr . Map.adjust (+ toPay) pe $ m'
-             toPay  = min canPay isOwed
-             canPay =          m' Map.! pr
-             isOwed = negate $ m' Map.! pe
+undoTs m tids
+ | any null [payers m, payees m, tids] = []
+ | otherwise = (transaction :) . undoTs adjustedMap $ ts
+      where
+ (transaction, adjustedMap) = repay m payer payee t
+ payer : _  = payers m
+ payee : _  = payees m
+ t     : ts = tids
+ repay m' pr pe tid =
+   (Transaction { from = pr, to = pe, amount = toPay, tid = tid }, m'')
+        where
+   m'' = Map.adjust (subtract toPay) pr . Map.adjust (+ toPay) pe $ m'
+   toPay  = min canPay isOwed
+   canPay =          m' Map.! pr
+   isOwed = negate $ m' Map.! pe
 
 -- Exercise 8 -----------------------------------------
 
@@ -148,35 +141,30 @@ writeJSON outPath = BS.writeFile outPath . encode
 
 -- Exercise 9 -----------------------------------------
 
-doEverything :: FilePath -> FilePath -> FilePath -> FilePath -> FilePath
-             -> FilePath -> IO String
-doEverything dog1 dog2 trans vict fids out = do
-  key <- getSecret dog1 dog2
-  decryptWithKey key vict
-  mts <- getBadTs vict trans
-  case mts of
-    Nothing -> error "No Transactions"
-    Just ts -> do
-      mids <- parseFile fids
-      case mids of
-        Nothing  -> error "No ids"
-        Just ids -> do
-          let flow = getFlow ts
-          writeJSON out (undoTs flow ids)
-          return (getCriminal flow)
+-- Purposefully unsafe.
+maybeFail :: String -> Maybe a -> Maybe a
+maybeFail s Nothing = error s
+maybeFail _ mx      = mx
+
+doEverything ::
+  FilePath -> FilePath -> FilePath -> FilePath -> FilePath -> FilePath
+  -> IO String
+doEverything dog1 dog2 trans vict fids out =
+  let flow = getFlow <$$$> maybeFail "No Transactions" <$> getBadTs vict trans
+      ids  =               maybeFail "No ids"          <$> parseFile fids
+   in getSecret dog1 dog2 >>= (`decryptWithKey` vict) >>
+      undoTs <$$$> flow <***> ids >>= writeJSON out >>
+      getCriminal . fromJust <$> flow
+
+route :: [String] -> IO String
+route (d1:d2:t:v:i:o:_) = doEverything d1 d2 t v i o
+route _                 = doEverything
+  "../resources/clues/dog-original.jpg"
+  "../resources/clues/dog.jpg"
+  "../resources/clues/transactions.json"
+  "../resources/clues/victims.json"
+  "../resources/clues/new-ids.json"
+  "../resources/clues/new-transactions.json"
 
 main :: IO ()
-main = do
-  args <- getArgs
-  crim <-
-    case args of
-      dog1:dog2:trans:vict:ids:out:_ ->
-          doEverything dog1 dog2 trans vict ids out
-      _ -> doEverything "../resources/clues/dog-original.jpg"
-                        "../resources/clues/dog.jpg"
-                        "../resources/clues/transactions.json"
-                        "../resources/clues/victims.json"
-                        "../resources/clues/new-ids.json"
-                        "../resources/clues/new-transactions.json"
-  putStrLn crim
-
+main = getArgs >>= route >>= putStrLn
