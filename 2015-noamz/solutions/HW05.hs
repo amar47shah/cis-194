@@ -117,22 +117,24 @@ payees :: Map String Integer -> [String]
 payees m = (sortBy ascendingLoss) . Map.keys . Map.filter (< 0) $ m
   where ascendingLoss p q = (m Map.! p) `compare` (m Map.! q)
 
+repay :: Map String Integer -> String -> String -> TId -> (Transaction, Map String Integer)
+repay m pr pe tid =
+  (Transaction { from = pr, to = pe, amount = toPay, tid = tid }, m')
+       where
+  m'     = Map.adjust (subtract toPay) pr . Map.adjust (+ toPay) pe $ m
+  toPay  = min canPay isOwed
+  canPay =          m Map.! pr
+  isOwed = negate $ m Map.! pe
+
 undoTs :: Map String Integer -> [TId] -> [Transaction]
 undoTs m tids
- | any null [payers m, payees m, tids] = []
- | otherwise = (transaction :) . undoTs adjustedMap $ ts
-      where
- (transaction, adjustedMap) = repay m payer payee t
- payer : _  = payers m
- payee : _  = payees m
- t     : ts = tids
- repay m' pr pe tid =
-   (Transaction { from = pr, to = pe, amount = toPay, tid = tid }, m'')
-        where
-   m'' = Map.adjust (subtract toPay) pr . Map.adjust (+ toPay) pe $ m'
-   toPay  = min canPay isOwed
-   canPay =          m' Map.! pr
-   isOwed = negate $ m' Map.! pe
+   | any null [payers m, payees m, tids] = []
+   | otherwise = t : undoTs m' is
+  where
+     (t, m')    = repay m payer payee i
+     payer : _  = payers m
+     payee : _  = payees m
+     i     : is = tids
 
 -- Exercise 8 -----------------------------------------
 
