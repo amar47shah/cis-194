@@ -1,5 +1,5 @@
 {-# OPTIONS_GHC -Wall #-}
-{-# LANGUAGE OverloadedStrings, RecordWildCards #-}
+{-# LANGUAGE RecordWildCards #-}
 module HW05 where
 
 import Control.Applicative (liftA2)
