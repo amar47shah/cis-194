@@ -54,10 +54,10 @@ test p = all (\i -> p i joinList) [-1..5]
   where joinList = Append 4 (Append 2 (Single 1 'D') (Single 1 'C'))
                             (Append 2 (Single 1 'A') (Single 1 'B'))
 
-foldJ :: c -> (b -> a -> c) -> (b -> c -> c -> c) -> JoinList b a -> c
+foldJ :: a -> (b -> a) -> (a -> a -> a) -> JoinList m b -> a
 foldJ e _ _ Empty          = e
-foldJ _ s _ (Single t x)   = s t x
-foldJ e s a (Append t l r) = a t (foldJ e s a l) (foldJ e s a r)
+foldJ _ s _ (Single _ x)   = s x
+foldJ e s a (Append _ l r) = a (foldJ e s a l) (foldJ e s a r)
 
 -- Exercise 2
 
