@@ -36,9 +36,12 @@ _  !!? i | i < 0 = Nothing
 (_:xs) !!? i     = xs !!? (i-1)
 
 jlToList :: JoinList m a -> [a]
-jlToList Empty            = []
-jlToList (Single _ a)     = [a]
-jlToList (Append _ l1 l2) = jlToList l1 ++ jlToList l2
+jlToList = foldJ [] (:[]) (++)
+
+foldJ :: a -> (b -> a) -> (a -> a -> a) -> JoinList m b -> a
+foldJ e _ _ Empty          = e
+foldJ _ s _ (Single _ x)   = s x
+foldJ e s a (Append _ l r) = a (foldJ e s a l) (foldJ e s a r)
 
 propIndexJ :: Int -> JoinList Size Char -> Bool
 propIndexJ i jl = indexJ i jl == (jlToList jl !!? i)
@@ -53,11 +56,6 @@ test :: (Int -> JoinList Size Char -> Bool) -> Bool
 test p = all (\i -> p i joinList) [-1..5]
   where joinList = Append 4 (Append 2 (Single 1 'D') (Single 1 'C'))
                             (Append 2 (Single 1 'A') (Single 1 'B'))
-
-foldJ :: a -> (b -> a) -> (a -> a -> a) -> JoinList m b -> a
-foldJ e _ _ Empty          = e
-foldJ _ s _ (Single _ x)   = s x
-foldJ e s a (Append _ l r) = a (foldJ e s a l) (foldJ e s a r)
 
 -- Exercise 2
 
