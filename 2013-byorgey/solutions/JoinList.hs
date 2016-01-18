@@ -57,6 +57,13 @@ test p = all (\i -> p i joinList) [-1..5]
   where joinList = Append 4 (Append 2 (Single 1 'D') (Single 1 'C'))
                             (Append 2 (Single 1 'A') (Single 1 'B'))
 
+listToJL :: [a] -> JoinList Size a
+listToJL []  = Empty
+listToJL [x] = Single (Size 1) x
+listToJL xs  = Append (Size n) (listToJL left) (listToJL right)
+  where n = length xs
+        (left, right) = splitAt (n `div` 2) xs
+
 -- Exercise 2
 
 indexJ :: (Sized b, Monoid b) => Int -> JoinList b a -> Maybe a
