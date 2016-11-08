@@ -124,7 +124,7 @@ scoreLine = scoreString >>= Single
 --------------------------------------------------------------------------------
 
 -- Exercise 4
--- fromString needs split with '\n'
+-- fixup fromString needs split with '\n'
 instance Buffer (JoinList (Score, Size) String) where
   toString = intercalate " " . jlToList
   fromString = foldr (+++) Empty . map lineToJL . lines where lineToJL = \line -> Single (scoreString line, (Size 1)) line	
