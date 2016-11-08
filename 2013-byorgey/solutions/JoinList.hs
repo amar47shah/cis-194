@@ -124,10 +124,10 @@ scoreLine = scoreString >>= Single
 --------------------------------------------------------------------------------
 
 -- Exercise 4
-
+-- fromString needs split with '\n'
 instance Buffer (JoinList (Score, Size) String) where
   toString = intercalate " " . jlToList
-  fromString s = Single (scoreString s, 1) s
+  fromString = foldr (+++) Empty . map lineToJL . lines where lineToJL = \line -> Single (scoreString line, (Size 1)) line	
   line = indexJ
   replaceLine i s jl = takeJ i jl +++ fromString s +++ dropJ (i + 1) jl
   numLines = getSize . snd . tag
